@@ -180,25 +180,25 @@ export class ClientApi {
         return r;
     }
 
-    async * BlogListIterator(start: number = 0, end: number = 50) {
-        let page: { [keys: number]: IBlog[] } = {};
+    // async * BlogListIterator(start: number = 0, end: number = 50) {
+    //     let page: { [keys: number]: IBlog[] } = {};
 
-        while (true) {
-            if (start >= end) {
-                break;
-            }
+    //     while (true) {
+    //         if (start >= end) {
+    //             break;
+    //         }
 
-            let pageNumber = Math.floor(start / this.PageSize);
-            if (page[pageNumber] == undefined) {
-                let { results } = await this.BlogList(pageNumber);
-                page[pageNumber] = results;
-            }
-            let n = start - (pageNumber * this.PageSize);
-            yield page[pageNumber][n];
+    //         let pageNumber = Math.floor(start / this.PageSize);
+    //         if (page[pageNumber] == undefined) {
+    //             let { results } = await this.BlogList(pageNumber);
+    //             page[pageNumber] = results;
+    //         }
+    //         let n = start - (pageNumber * this.PageSize);
+    //         yield page[pageNumber][n];
 
-            start++;
-        }
-    }
+    //         start++;
+    //     }
+    // }
 
     async BlogGet(id: number) {
         let r = await this.api<{}, IBlog>(`/blogs/${id}/`).catch();

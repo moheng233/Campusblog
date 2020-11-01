@@ -106,8 +106,8 @@
 	}
 </script>
 
-<style type="scss" global>
-	@import "./styles/gallery.min.scss";
+<style type="less" global>
+	@import "./styles/gallery.less";
 
 	#section-header > nav {
 		background-color: #7db557;
