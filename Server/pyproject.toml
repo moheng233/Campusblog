@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "server"
+version = "0.1.0"
+description = ""
+authors = ["moheng233 <57742561+moheng233@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^3.1.2"
+djoser = {path = "djoser-2.1.0-py3-none-any.whl"}
+django-cors-headers = "^3.5.0"
+django-simpleui = "^2020.9.26"
+djangorestframework = "^3.12.1"
+djangorestframework-simplejwt = "^4.3.0"
+martor = "^1.5.6"
+Pillow = "^8.0.1"
+drf_base64 = "^2.0"
+drf-extra-fields = {git = "https://github.com/lmbringas/drf-extra-fields.git"}
+djangorestframework-rapidjson = "^0.1.4"
+djangorestframework-msgpack = {git = "https://github.com/juanriaza/django-rest-framework-msgpack.git"}
+django-utils-six = "^2.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

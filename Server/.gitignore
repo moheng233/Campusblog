@@ -1,0 +1,9 @@
+django
+.vscode
+db.sqlite3
+*/migrations
+*/__pycache__
+
+static/blogs
+
+*.pyc
