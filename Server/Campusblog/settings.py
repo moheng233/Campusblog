@@ -102,10 +102,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication'
     ],
     'DEFAULT_RENDERER_CLASSES': [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework_rapidjson.renderers.RapidJSONRenderer",
         "rest_framework_msgpack.renderers.MessagePackRenderer"
     ],
     'DEFAULT_PARSER_CLASSES': [
+        "rest_framework.parsers.JSONParser",
         'rest_framework_rapidjson.parsers.RapidJSONParser',
         "rest_framework_msgpack.parsers.MessagePackParser"
     ],

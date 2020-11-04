@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { link } from 'svelte-spa-router/Router.svelte';
+
     import {fade} from 'svelte/transition'
 
     export let id: number;
@@ -36,7 +38,7 @@
             <div class="placeholder">
                 <!-- svelte-ignore a11y-missing-attribute -->
                 <div class="gallery-curve-wrapper">
-                    <a class="gallery-cover gray" href="#/blog/{id}">
+                    <a class="gallery-cover gray" href="/blog/{id}" use:link>
                         <img
                             class="responsive-img"
                             src="{subimage}" />

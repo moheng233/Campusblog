@@ -1,10 +1,10 @@
 from collections import OrderedDict
 from rest_framework.response import Response
-from Campusblogs.models import Blogs
+from Campusblogs.models import Blogs, Posts
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from Campusblogs.serializers import BlogsListSerializer, BlogsSerializer
+from Campusblogs.serializers import BlogsListSerializer, BlogsSerializer, PostSerializer
 
 from rest_framework.pagination import PageNumberPagination
 
@@ -17,7 +17,7 @@ class BlogPagePagination(PageNumberPagination):
 
 # Create your views here.
 class BlogViewSet(viewsets.ModelViewSet):
-    queryset = Blogs.objects.all()
+    queryset = Blogs.objects.filter(activation=True).all()
     serializer_class = BlogsListSerializer
 
     pagination_class = BlogPagePagination
@@ -33,3 +33,7 @@ class BlogViewSet(viewsets.ModelViewSet):
             return BlogsSerializer
         else:
             return super().get_serializer_class()
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Posts.objects.all()
+    serializer_class = PostSerializer

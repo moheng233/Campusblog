@@ -8,6 +8,7 @@
 
     import { fade, fly } from "svelte/transition";
     import { ClientApi } from "../tool/api";
+    import { link } from 'svelte-spa-router/Router.svelte';
 
     export let name: string = "name";
 
@@ -33,6 +34,6 @@
 </div>
 
 <div class="fixed-action-btn">
-    <a class="btn-floating btn-large red" href="#/edit"><i
+    <a class="btn-floating btn-large red" href="/edit/creater" use:link><i
             class="large material-icons">mode_edit</i></a>
 </div>

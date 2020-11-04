@@ -3,7 +3,11 @@
     登陆插件
 -->
 <script lang="ts">
+    import M from "materialize-css";
+
     import { fly, slide } from "svelte/transition";
+
+    import { push } from "svelte-spa-router/Router.svelte";
 
     import InputField from "../Components/InputField/InputField.svelte";
     import Card from "../Components/Card/Card.svelte";
@@ -18,14 +22,20 @@
 
     let LoginClick = () => {
         if (user.password != "" && user.username != "") {
-                ClientApi.object.AuthLogin({
+            ClientApi.object
+                .AuthLogin({
                     username: user.username,
-                    password: user.password
-                }).then(async r => {
-                Login.LoginToken.set(r.access);
-                Login.RefToken.set(r.refresh);
-                Login.Login.set(true);
-            });
+                    password: user.password,
+                })
+                .then(async (r) => {
+                    Login.LoginToken.set(r.access);
+                    Login.RefToken.set(r.refresh);
+                    M.toast({
+                        html: "登陆成功",
+                    });
+                    push("/");
+                })
+                .catch();
         }
     };
 

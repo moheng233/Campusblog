@@ -26,6 +26,7 @@ from Campusblogs import views
 
 router = routers.DefaultRouter()
 router.register(r'blogs', views.BlogViewSet)
+router.register(r'posts', views.PostViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

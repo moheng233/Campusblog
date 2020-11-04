@@ -30,8 +30,16 @@ export interface IBlog {
     "updated_at": string
 }
 
+export interface IBlogCreater {
+    title: string,
+    subtitle: string,
+    subimage: string | ArrayBuffer,
+    content: string
+}
+
 export interface IPost {
     "id": number,
+    "blog": number,
     "user": {
         "id": number,
         "last_name": string
@@ -80,7 +88,7 @@ export class ClientApi {
      * @param H 自定义HTTPHeader
      * @param type 数据的格式化方法
      */
-    async api<I extends {}, R extends {}>(url: string, searchparams: { [keys: string]: string } = {}, body: I | undefined = undefined, method: HTTPmethod = "GET", token: boolean = true, H: Headers = new Headers(), type: "json" | "msgpack" = "msgpack"): Promise<R> {
+    async api<I extends {}, R extends {}>(url: string, searchparams: { [keys: string]: string } = {}, body: I | undefined = undefined, method: HTTPmethod = "GET", token: boolean = true, H: Headers = new Headers(), type: "json" | "msgpack" = "json"): Promise<R> {
         if (token === true) {
             H.set("Authorization", `Bearer ${get(Login.LoginToken)}`)
         }
@@ -101,28 +109,27 @@ export class ClientApi {
 
             }
         } else if (method == 'GET') {
-        
+
         }
-        if (searchparams != undefined) {
-            url += `?${new URLSearchParams(searchparams).toString()}`;
-        }
+        // if (searchparams != undefined) {
+        //     url += `?${new URLSearchParams(searchparams).toString()}`;
+        // }
 
 
-        let F = await fetch(`${this.HTTPHeader}${url}`, RI).then(async r => {
+        let F = await fetch(`${this.HTTPHeader}${url}?${new URLSearchParams(searchparams)?.toString() ?? ''}`, RI).then(async r => {
             if (r.ok) {
                 return await this.decode(r, type);
 
             } else {
-                if (r.status == 401) {
-                    let b: IErr = await this.decode(r, type);
+                let b: IErr = await this.decode(r, type);
+                if (r.status == 401 && b.code == "token_not_valid" && token === true) {
+                    let { access } = await this.AuthRefToken(get(Login.RefToken));
 
-                    if (b.code == "token_not_valid" && token === true) {
-                        let { access } = await this.AuthRefToken(get(Login.RefToken));
+                    Login.LoginToken.set(access);
 
-                        Login.LoginToken.set(access);
-
-                        return await this.api<I, R>(url, searchparams, body, method, token, H, type);
-                    }
+                    return await this.api<I, R>(url, searchparams, body, method, token, H, type);
+                } else {
+                    throw b;
                 }
             }
         });
@@ -152,23 +159,41 @@ export class ClientApi {
      */
     async AuthLogin(data: IAuth_Login) {
         let r = await this.api<IAuth_Login, {
+            'code': string,
             'refresh': string,
             'access': string
-        }>('/auth/jwt/create/', {}, data, "POST", false);
+        }>('/auth/jwt/create/', {}, data, "POST", false).catch((r: IErr) => {
+            if(r.detail == "No active account found with the given credentials"){
+                throw "password err";
+            }
+        });
 
         return r;
     }
 
-    async UsersGet(id?: number) {
-        return await this.api<{}, {
-            id: number,
-            avatar: string,
+    async AuthLoginOut() {
+        Login.LoginToken.set("");
+        Login.RefToken.set("");
+    }
+
+    async UserCreater(email: string, username: string, password: string) {
+        return await this.api<{
             email: string,
-            first_name: string,
-            last_login: string,
-            last_name: string,
-            username: string
-        }>(`/auth/users/${id ?? "me"}/`);
+            username: string,
+            password: string
+        }, {
+            email: string,
+            username: string,
+            password: string
+        }>("/auth/users/", {}, {
+            email,
+            username,
+            password
+        }, "POST", false);
+    }
+
+    async UsersGet(id?: number) {
+        return await this.api<{}, IUser>(`/auth/users/${id ?? "me"}/`);
     }
 
     async BlogList(page?: number) {
@@ -201,8 +226,24 @@ export class ClientApi {
     // }
 
     async BlogGet(id: number) {
-        let r = await this.api<{}, IBlog>(`/blogs/${id}/`).catch();
+        return await this.api<{}, IBlog>(`/blogs/${id}/`).catch();
+    }
 
-        return r;
+    async BlogCreater(data: IBlogCreater) {
+        return await this.api<IBlogCreater, IBlog>("/blogs/", undefined, data, "POST", true);
+    }
+
+    async BlogUpdata(bid: number, data: IBlogCreater) {
+        return await this.api<IBlogCreater, IBlog>(`/blogs/${bid}/`, undefined, data, "PUT", true);
+    }
+
+    async BlogPost(bid: number, content: string) {
+        return await this.api<{
+            blog: number,
+            content: string
+        }, IPost>("/posts/", undefined, {
+            blog: bid,
+            content
+        }, "POST")
     }
 }

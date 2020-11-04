@@ -1,20 +1,21 @@
 <script lang="typescript">
-	import Router from "svelte-spa-router/Router.svelte";
+	import Router, { link } from "svelte-spa-router/Router.svelte";
 	import type { IPage } from "./main";
 
 	import login from "./Login/login.svelte";
+	import register from "./Login/register.svelte";
 	import home from "./Home/home.svelte";
-	import homeContent from "./Home/blogContent.svelte";
+	import blogContent from "./Home/blogContent.svelte";
 
-	import Blogedit from "./Home/blogEdit.svelte";
-
+	import { push,pop } from 'svelte-spa-router/Router.svelte';
 	import wrap from "svelte-spa-router/wrap";
 	import { fade, slide } from "svelte/transition";
 	import * as store from "./store";
 	import BlogEdit from "./Home/blogEdit.svelte";
 	import { ClientApi } from "./tool/api";
+	import type {IUser} from "./tool/api";
 
-	let Login = store.Login.Login;
+	let Login = store.LoginSwitch;
 
 	export let RouterData: IPage = {
 		title: "主页",
@@ -39,7 +40,7 @@
 				},
 			},
 		}),
-		"/edit": wrap<IPage>({
+		"/edit/:id": wrap<IPage>({
 			component: BlogEdit,
 			userData: {
 				title: "发布你的沙雕言论",
@@ -48,7 +49,7 @@
 			},
 		}),
 		"/blog/:id": wrap<IPage>({
-			component: homeContent,
+			component: blogContent,
 			userData: {
 				title: "详细",
 				HeaderType: "back",
@@ -67,11 +68,21 @@
 				},
 			},
 		}),
+		"/auth/register": wrap<IPage>({
+			component: register,
+			userData: {
+				title: "注册",
+				HeaderType: "home",
+				hideHeader: false,
+				HeaderText: {
+					h1: "我盲猜你没有账号！",
+					h2: "你是来注册的吧！"
+				}
+			}
+		})
 	};
 
-	let Title: string = "CampusBlog";
-
-	let UserData = ClientApi.object.UsersGet();
+	let UserDown: boolean = false;
 
 	function onRouteLoaded(
 		event: CustomEvent<{
@@ -84,30 +95,14 @@
 	) {
 		let ud = event.detail.userData;
 
-		// if (ud.title != undefined) {
-		// 	Title = ud.title;
-		// } else {
-		// 	Title = "CampusBlog";
-		// }
-
-		// if (ud.hideHeader != undefined) {
-		// 	hideHeader = ud.hideHeader;
-		// } else {
-		// 	hideHeader = false;
-		// }
-
-		// if (ud.HeaderType != undefined) {
-		// 	HeaderType = ud.HeaderType;
-		// } else {
-		// 	HeaderType = "home";
-		// }
-
 		RouterData = ud;
 	}
 </script>
 
-<style type="less" global>
-	@import "./styles/gallery.less";
+<style type="scss" global>
+	@import "./styles/gallery.scss";
+	/* @import "./styles/materialize.scss"; */
+	/* @import "./styles/_style.scss"; */
 
 	#section-header > nav {
 		background-color: #7db557;
@@ -133,21 +128,43 @@
 					<ul class="right hide-on-med-and-down">
 						<li><a href="#/" class="site-nav__link">主页</a></li>
 						{#if $Login == true}
-							<li>
-								{#await UserData then User}
+							<li on:mouseenter={() => {UserDown = true}}
+								on:mouseleave={() => {UserDown = false}}>
+								{#await store.getUser() then User}
 									<a
-									href="#/auth/me"
+									use:link
+									href="/auth/me"
 									class="user-account dropdown-button"><img
 										class="circle"
 										style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
 										src="{ User.avatar }" />{ User.last_name }</a>
+									{#if UserDown}
+										<ul
+										in:slide out:fade
+										class="dropdown-content"
+										style="white-space: nowrap;position: absolute;opacity: 1;display: block;margin-left: 20px;">
+											<li>
+												<a href="#/auth/users/me">用户</a>
+											</li>
+											<li>
+												<a on:click={ClientApi.object.AuthLoginOut}>退出登陆</a>
+											</li>
+										</ul>
+									{/if}
 								{/await}
 							</li>
 						{:else}
 							<li>
 								<a
-									href="#/auth/login"
+									use:link
+									href="/auth/login"
 									class="site-nav__link">登陆</a>
+							</li>
+							<li>
+								<a
+									use:link
+									href="/auth/register"
+									class="site-nav__link">注册</a>
 							</li>
 						{/if}
 					</ul>
@@ -170,7 +187,7 @@
 				in:fade>
 				<div class="nav-wrapper">
 					<div class="container">
-						<a class="back-btn" href="#/">
+						<a class="back-btn" on:click="{() => {pop()}}">
 							<i class="material-icons">arrow_back</i>
 							<span>返回</span>
 						</a>
@@ -180,6 +197,6 @@
 		{/if}
 	</div>
 	<div>
-		<Router routes={RouterList} on:routeLoaded={onRouteLoaded} />
+		<Router routes={RouterList} on:routeLoaded={onRouteLoaded} restoreScrollState={true} />
 	</div>
 </main>

@@ -1,25 +1,56 @@
 <script lang="ts">
+    import m from 'materialize-css'
+
+    import {User as UserStore} from '../store';
+
     import { ClientApi } from "../tool/api";
-    import type { IBlog } from "../tool/api";
+    import type { IBlog,IUser } from "../tool/api";
 
     import Vditor from "vditor";
 
     import moment from "moment";
-import InputField from "../Components/InputField/InputField.svelte";
-import Button from "../Components/Button/Button.svelte";
+    import InputField from "../Components/InputField/InputField.svelte";
+    import Button from "../Components/Button/Button.svelte";
+    import { fade, fly, slide } from "svelte/transition";
+    import { push } from 'svelte-spa-router/Router.svelte';
+    import { getContext } from 'svelte';
 
     let BackColor: string;
     let BackImage: string = "";
 
     export let params: { id: number };
 
-    let promise = ClientApi.object.BlogGet(params.id);
+    let floatingbtn: boolean = false;
+    let editType: "edit" | "report" = "edit";
+
+    let promise = ClientApi.object.BlogGet(params.id).then(r => {
+        let user = $UserStore;
+        if(user.id == r.user.id){
+            editType = "edit"
+        } else {
+            editType = "report"
+        }
+
+        return r;
+    });
 
     let preview = (node: HTMLDivElement, blog: IBlog) => {
         Vditor.preview(node, blog.content, {
             anchor: 0,
         });
     };
+
+    let PostContent: string = "";
+
+    async function PostCreate(){
+        ClientApi.object.BlogPost((await promise).id,PostContent).then(r => {
+            m.toast({
+                html: "回复成功"
+            })
+            promise = ClientApi.object.BlogGet(params.id);
+            PostContent = "";
+        });
+    }
 </script>
 
 <style lang="scss" global>
@@ -38,7 +69,7 @@ import Button from "../Components/Button/Button.svelte";
         <a
             class="go-to-comments btn-floating btn-large waves-effect waves-light active"
             style="background-color: rgb(203, 199, 159);">
-            <i class="material-icons">comment</i>
+            <i class="material-icons">回复</i>
         </a>
     </div>
     <div
@@ -53,13 +84,13 @@ import Button from "../Components/Button/Button.svelte";
                 <p class="author">
                     由{blog.user.last_name}发布在
                     <time
-                        datetime="{moment(blog.created_at).toJSON()}">{moment(blog.created_at).fromNow()}</time>
+                        datetime={moment(blog.created_at).toJSON()}>{moment(blog.created_at).fromNow()}</time>
                 </p>
-                <h3>{ blog.posts.length }条回复</h3>
+                <h3>{blog.posts.length}条回复</h3>
                 <div id="comments">
                     {#each blog.posts as post}
                         <ul>
-                            <li id="{post.id.toString()}" >
+                            <li id={post.id.toString()}>
                                 <p class="author">
                                     {post.user.last_name}回复于<time>{moment(post.created_at).fromNow()}</time>
                                 </p>
@@ -72,17 +103,50 @@ import Button from "../Components/Button/Button.svelte";
                 </div>
                 <div id="">
                     <h3>发表评论</h3>
-                    <InputField type="text" label_name="你要bb啥？？？" />
-                    <Button size="large">发布</Button>
+                    <InputField type="text" label_name="你要bb啥？？？" bind:value={PostContent} />
+                    <Button size="large" on:click={PostCreate}>发布</Button>
                 </div>
             </div>
         {/await}
     </div>
+    <div
+        class="fixed-action-btn"
+        on:mouseenter={() => {
+            floatingbtn = true;
+        }}
+        on:mouseleave={() => {
+            floatingbtn = false;
+        }}>
+        <a class="btn-floating btn-large red">
+            {#if editType == "edit"}
+                <i class="large material-icons">mode_edit</i>
+            {:else if editType == "report"}
+                <i class="large material-icons">report</i>
+            {/if}
+            
+        </a>
+        {#if floatingbtn}
+            <ul style="" in:slide out:fade>
+                <li>
+                    <a class="btn-floating red"><i
+                            class="material-icons">insert_chart</i></a>
+                </li>
+                <li>
+                    <a class="btn-floating yellow darken-1"><i
+                            class="material-icons">format_quote</i></a>
+                </li>
+                <li>
+                    <a class="btn-floating green"><i
+                            class="material-icons">publish</i></a>
+                </li>
+                <li>
+                    <a class="btn-floating blue"><i
+                            class="material-icons">attach_file</i></a>
+                </li>
+            </ul>
+        {/if}
+    </div>
 </div>
-<!-- <div
-    id="placeholder-overlay"
-    style="background: {BackColor} url({BackImage}) repeat-x;background-blend-mode: lighten;"
-    class="visible" /> -->
 <svelte:head>
     <link
         rel="stylesheet"
