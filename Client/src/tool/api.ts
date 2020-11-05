@@ -1,7 +1,7 @@
 import * as msgpack from '@msgpack/msgpack';
 
 import { get } from "svelte/store";
-import { Login } from "../store";
+import { Login, LoginSwitch } from "../store";
 
 type HTTPmethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -15,6 +15,15 @@ interface IAuth_Login {
     password: string
 }
 
+export interface IUploadImage {
+    "id": number
+    "user": {
+        "id": number,
+        "last_name": string
+    },
+    "file": string
+}
+
 export interface IBlog {
     "id": number,
     "title": string,
@@ -25,7 +34,7 @@ export interface IBlog {
     "posts": IPost[],
     "subtitle": string,
     "content": string,
-    "subimage": string,
+    "subimage": IUploadImage,
     "created_at": string,
     "updated_at": string
 }
@@ -33,7 +42,7 @@ export interface IBlog {
 export interface IBlogCreater {
     title: string,
     subtitle: string,
-    subimage: string | ArrayBuffer,
+    subimage: number,
     content: string
 }
 
@@ -48,8 +57,16 @@ export interface IPost {
     "created_at": string
 }
 
+export interface IReport {
+    "user": number
+    "blog": number
+    "created_at": string,
+    "reason": string,
+    "permit": boolean
+}
+
 export interface IUser {
-    "avatar": string,
+    "avatar": IUploadImage,
     "email": string,
     "first_name": string,
     "id": number,
@@ -79,6 +96,25 @@ export class ClientApi {
     }
 
     /**
+     * 将文件转换为base64编码
+     * 这仅仅是一个Promise封装而已！
+     * @param file 文件
+     */
+    File2Base64(file: File) {
+        return new Promise<string>((res, rej) => {
+            let fr = new FileReader();
+            fr.onload = (e) => {
+                res(e.target.result as string)
+            };
+            fr.onerror = (e) => {
+                rej(e)
+            };
+
+            fr.readAsDataURL(file);
+        })
+    }
+
+    /**
      * 对于Fetch的一个访问封装
      * @param url 要访问的接口URL
      * @param searchparams 查询参数
@@ -89,7 +125,7 @@ export class ClientApi {
      * @param type 数据的格式化方法
      */
     async api<I extends {}, R extends {}>(url: string, searchparams: { [keys: string]: string } = {}, body: I | undefined = undefined, method: HTTPmethod = "GET", token: boolean = true, H: Headers = new Headers(), type: "json" | "msgpack" = "json"): Promise<R> {
-        if (token === true) {
+        if (token === true && get(LoginSwitch) == true) {
             H.set("Authorization", `Bearer ${get(Login.LoginToken)}`)
         }
 
@@ -99,10 +135,11 @@ export class ClientApi {
         RI.headers = H;
         H.set('content-type', `application/${type}`);
         searchparams['format'] = type;
-        if (method == 'POST') {
+        if (method == 'POST' || method == 'PUT' || method == "DELETE") {
             if (body != undefined) {
                 if (type == "json") {
                     RI.body = JSON.stringify(body);
+                    console.log(RI.body)
                 } else if (type == "msgpack") {
                     RI.body = msgpack.encode(body);
                 }
@@ -162,20 +199,25 @@ export class ClientApi {
             'code': string,
             'refresh': string,
             'access': string
-        }>('/auth/jwt/create/', {}, data, "POST", false).catch((r: IErr) => {
-            if(r.detail == "No active account found with the given credentials"){
-                throw "password err";
-            }
-        });
+        }>('/auth/jwt/create/', {}, data, "POST", false)
 
         return r;
     }
 
+    /**
+     * 退出登陆
+     */
     async AuthLoginOut() {
         Login.LoginToken.set("");
         Login.RefToken.set("");
     }
 
+    /**
+     * 注册新用户
+     * @param email 邮箱
+     * @param username 用户名
+     * @param password 密码
+     */
     async UserCreater(email: string, username: string, password: string) {
         return await this.api<{
             email: string,
@@ -192,15 +234,27 @@ export class ClientApi {
         }, "POST", false);
     }
 
+    /**
+     * 获得用户信息
+     * @param id 用户id（可以为未定义，即获取自己的信息）
+     */
     async UsersGet(id?: number) {
         return await this.api<{}, IUser>(`/auth/users/${id ?? "me"}/`);
     }
 
+    async UsersUpdata(data: { last_name: string, email: string, avatar: number }, id?: number) {
+
+    }
+
+    /**
+     * 获得Blog列表
+     * @param page 页
+     */
     async BlogList(page?: number) {
         let r = await this.api<{}, {
             "count": number,
             "results": IBlog[]
-        }>(`/blogs/`, { "page": `${page}` }, undefined, "GET", true, new Headers(), "msgpack");
+        }>(`/blogs/`, { "page": `${page}` }, undefined, "GET", true);
 
         return r;
     }
@@ -245,5 +299,23 @@ export class ClientApi {
             blog: bid,
             content
         }, "POST")
+    }
+
+    async BlogReport(data: {
+        blog: number,
+        reason: string
+    }) {
+        return await this.api<{
+            blog: number,
+            reason: string
+        },IReport>("/reports/", undefined, data,"POST",true);
+    }
+
+    async UploadImages(file: string) {
+        return await this.api<{
+            file: string
+        }, IUploadImage>("/uploadimage/", undefined, {
+            file
+        }, "POST", true)
     }
 }

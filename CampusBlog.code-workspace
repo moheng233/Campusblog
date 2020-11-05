@@ -8,12 +8,9 @@
 		},
 		{
 			"path": "Server"
-		},
-		{
-			"path": "TestServer"
 		}
 	],
 	"settings": {
-		"typescript.tsdk": "TestServer\\node_modules\\typescript\\lib"
+		"typescript.tsdk": "Client\\node_modules\\typescript\\lib"
 	}
 }

@@ -5,8 +5,9 @@
     import m from "materialize-css";
 
     import InputField from "../Components/InputField/InputField.svelte";
-    import { push,replace } from "svelte-spa-router/Router.svelte";
-    import Blog from "./blog.svelte";
+    import { push, replace } from "svelte-spa-router/Router.svelte";
+    import { get } from "svelte/store";
+    import { Login } from "../store";
 
     export let params: {
         id: number | "creater";
@@ -16,13 +17,20 @@
         if (id == "creater") {
             let data: IBlogCreater = {
                 content: "",
-                subimage: "",
+                subimage: undefined,
                 subtitle: "",
                 title: "",
             };
             return data;
         } else {
-            return await ClientApi.object.BlogGet(id);
+            let data = await ClientApi.object.BlogGet(id);
+            let newdata:IBlogCreater = {
+                content: data.content,
+                subimage: data.subimage as unknown as number,
+                subtitle: data.subtitle,
+                title: data.title
+            }
+            return newdata;
         }
     }
 
@@ -38,17 +46,17 @@
         content: "",
         title: "",
         subtitle: "",
-        subimage: "",
+        subimage: undefined,
     };
-
-    $: console.log(BlogData);
 
     const onSubimage = (event: CustomEvent<HTMLInputElement>) => {
         console.log(event);
         if (event.detail.files.length > 0) {
             let fr = new FileReader();
             fr.onload = (e) => {
-                BlogData.subimage = e.target.result;
+                ClientApi.object.UploadImages(e.target.result as string).then((e) => {
+                    BlogData.subimage = e.id
+                })
             };
             fr.onerror = (e) => {};
             let file = event.detail.files[0];
@@ -67,6 +75,7 @@
             });
             replace(`/blog/${blog.id}`);
         } else {
+            console.log(BlogData)
             let blog = await ClientApi.object.BlogUpdata(params.id, BlogData);
             m.toast({
                 html: "修改成功",
@@ -92,6 +101,46 @@
                     hljs: {
                         lineNumber: true,
                     },
+                },
+                upload: {
+                    url: `${ClientApi.object.HTTPHeader}/uploadimage/`,
+                    accept: "image/*",
+                    headers: {
+                        Authorization: `Bearer ${get(Login.LoginToken)}`,
+                    },
+                    format: (Files: File[], responseText: string) => {
+                        let rj: {
+                            id: number;
+                            user: {
+                                id: number;
+                                last_name: string;
+                            };
+                            file: string;
+                        } = JSON.parse(responseText);
+
+                        let filename = (new URL(rj.file).pathname.split('/').pop());
+                        let r: {
+                            msg: string;
+                            code: number;
+                            data: {
+                                errFiles: string[];
+                                succMap: {
+                                    [keys:string]: string;
+                                };
+                            };
+                        } = {
+                            msg: "上传成功",
+                            code: 0,
+                            data: {
+                                errFiles: [],
+                                succMap: {}
+                            },
+                        };
+
+                        r.data.succMap[filename] = rj.file
+                        return JSON.stringify(r);
+                    },
+                    fieldName: "file",
                 },
             });
         })();

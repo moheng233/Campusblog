@@ -6,6 +6,7 @@
     import Button from '../Components/Button/Button.svelte';
     import { fly } from 'svelte/transition';
     import { ClientApi } from '../tool/api';
+    import { replace } from 'svelte-spa-router/Router.svelte';
 
     let form:{
         "username": string,
@@ -18,9 +19,25 @@
     }
 
     let Register = async () => {
-        let data = await ClientApi.object.UserCreater(form.email,form.username,form.password);
-        M.toast({html: "注册成功！"});
-        console.log(data)
+        let data = await ClientApi.object.UserCreater(form.email,form.username,form.password).then(r => {
+            M.toast({html: "注册成功！"});
+            replace("/auth/login")
+        }).catch((r:{
+            username?: string[],
+            email?: string[],
+            password?: string
+        }) => {
+            console.log(r['username'])
+            for (let input in r){
+                for(let err of r[input]){
+                    console.log(err)
+                    M.toast({
+                        html: `${input}:${err}`
+                    })
+                }
+            }
+        })
+        
     }
 </script>
 

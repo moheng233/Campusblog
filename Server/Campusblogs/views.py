@@ -1,14 +1,19 @@
 from collections import OrderedDict
-from rest_framework.response import Response
-from Campusblogs.models import Blogs, Posts
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from rest_framework import viewsets
-from Campusblogs.serializers import BlogsListSerializer, BlogsSerializer, PostSerializer
 
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+
+from Campusblogs.models import Blogs, Posts, Reports, UploadImages
+from Campusblogs.serializers import (BlogsListSerializer, BlogsSerializer,
+                                     PostSerializer, ReportsSerializer, UploadImagesSerializer)
+
 
 class BlogPagePagination(PageNumberPagination):
+    page_size = 20
+
     def get_paginated_response(self, data):
         return Response(OrderedDict([
             ('count', self.page.paginator.count),
@@ -34,6 +39,21 @@ class BlogViewSet(viewsets.ModelViewSet):
         else:
             return super().get_serializer_class()
 
+    def get_permissions(self):
+        if(self.action == "list"):
+            return []
+        else:
+            return super().get_permissions()
+        pass
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Posts.objects.all()
     serializer_class = PostSerializer
+
+class ReportsViewSet(viewsets.ModelViewSet):
+    queryset = Reports.objects.all()
+    serializer_class = ReportsSerializer
+
+class UploadImagesViewSet(viewsets.ModelViewSet):
+    queryset = UploadImages.objects.all()
+    serializer_class = UploadImagesSerializer

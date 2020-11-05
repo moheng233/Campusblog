@@ -2,6 +2,8 @@
 	import Router, { link } from "svelte-spa-router/Router.svelte";
 	import type { IPage } from "./main";
 
+	import Modal from "svelte-simple-modal/src/Modal.svelte"
+
 	import login from "./Login/login.svelte";
 	import register from "./Login/register.svelte";
 	import home from "./Home/home.svelte";
@@ -137,7 +139,7 @@
 									class="user-account dropdown-button"><img
 										class="circle"
 										style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
-										src="{ User.avatar }" />{ User.last_name }</a>
+										src="{ User.avatar.file }" />{ User.username }</a>
 									{#if UserDown}
 										<ul
 										in:slide out:fade
@@ -197,6 +199,8 @@
 		{/if}
 	</div>
 	<div>
-		<Router routes={RouterList} on:routeLoaded={onRouteLoaded} restoreScrollState={true} />
+		<Modal>
+			<Router routes={RouterList} on:routeLoaded={onRouteLoaded} restoreScrollState={true} />
+		</Modal>
 	</div>
 </main>

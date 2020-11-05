@@ -4,8 +4,12 @@ from django.db import models
 from django.db.models.query import QuerySet
 from martor.widgets import AdminMartorWidget
 
-from Campusblogs.models import Blogs, Posts , Reports
+from Campusblogs.models import Blogs, Posts , Reports, UploadImages
 
+@admin.register(UploadImages)
+class UploadImagesAdmin(admin.ModelAdmin):
+    search_fields = ('user',)
+    list_display = ['id','user','file']
 
 @admin.register(Blogs)
 class BlogsAdmin(admin.ModelAdmin):

@@ -1,34 +1,36 @@
 <script lang="ts">
-    import m from 'materialize-css'
+    import m from "materialize-css";
 
-    import {User as UserStore} from '../store';
+    import { User as UserStore } from "../store";
 
     import { ClientApi } from "../tool/api";
-    import type { IBlog,IUser } from "../tool/api";
+    import type { IBlog, IUser } from "../tool/api";
+
+    import { getContext, onMount, setContext } from 'svelte';
 
     import Vditor from "vditor";
+
+    import { bid } from '../store';
 
     import moment from "moment";
     import InputField from "../Components/InputField/InputField.svelte";
     import Button from "../Components/Button/Button.svelte";
     import { fade, fly, slide } from "svelte/transition";
-    import { push } from 'svelte-spa-router/Router.svelte';
-    import { getContext } from 'svelte';
+    import { link, push } from "svelte-spa-router/Router.svelte";
 
-    let BackColor: string;
-    let BackImage: string = "";
+    import reportModal from './reportModal.svelte';
 
     export let params: { id: number };
 
     let floatingbtn: boolean = false;
     let editType: "edit" | "report" = "edit";
 
-    let promise = ClientApi.object.BlogGet(params.id).then(r => {
+    let promise = ClientApi.object.BlogGet(params.id).then((r) => {
         let user = $UserStore;
-        if(user.id == r.user.id){
-            editType = "edit"
+        if (user.id == r.user.id) {
+            editType = "edit";
         } else {
-            editType = "report"
+            editType = "report";
         }
 
         return r;
@@ -42,11 +44,15 @@
 
     let PostContent: string = "";
 
-    async function PostCreate(){
-        ClientApi.object.BlogPost((await promise).id,PostContent).then(r => {
+    const { open } = getContext('simple-modal');
+
+    bid.set(params.id);
+
+    async function PostCreate() {
+        ClientApi.object.BlogPost((await promise).id, PostContent).then((r) => {
             m.toast({
-                html: "回复成功"
-            })
+                html: "回复成功",
+            });
             promise = ClientApi.object.BlogGet(params.id);
             PostContent = "";
         });
@@ -103,9 +109,16 @@
                 </div>
                 <div id="">
                     <h3>发表评论</h3>
-                    <InputField type="text" label_name="你要bb啥？？？" bind:value={PostContent} />
+                    <InputField
+                        type="text"
+                        label_name="你要bb啥？？？"
+                        bind:value={PostContent} />
                     <Button size="large" on:click={PostCreate}>发布</Button>
                 </div>
+            </div>
+        {:catch err}
+            <div class="title-wrapper">
+                <h3>嗝，这个博客不是被删了就是被封了。<br />也有可能是你不配</h3>
             </div>
         {/await}
     </div>
@@ -117,14 +130,19 @@
         on:mouseleave={() => {
             floatingbtn = false;
         }}>
-        <a class="btn-floating btn-large red">
-            {#if editType == "edit"}
+        {#if editType == 'edit'}
+            <a
+                class="btn-floating btn-large red"
+                use:link
+                href="/edit/{params.id}/">
                 <i class="large material-icons">mode_edit</i>
-            {:else if editType == "report"}
+            </a>
+        {:else if editType == 'report'}
+            <a class="btn-floating btn-large red" on:click="{() => {open(reportModal)}}">
                 <i class="large material-icons">report</i>
-            {/if}
-            
-        </a>
+            </a>
+        {/if}
+
         {#if floatingbtn}
             <ul style="" in:slide out:fade>
                 <li>

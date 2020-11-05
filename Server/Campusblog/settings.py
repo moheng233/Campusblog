@@ -108,11 +108,10 @@ REST_FRAMEWORK = {
         "rest_framework_msgpack.renderers.MessagePackRenderer"
     ],
     'DEFAULT_PARSER_CLASSES': [
-        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.MultiPartParser",
         'rest_framework_rapidjson.parsers.RapidJSONParser',
         "rest_framework_msgpack.parsers.MessagePackParser"
-    ],
-    'PAGE_SIZE': 20
+    ]
 }
 
 WSGI_APPLICATION = 'Campusblog.wsgi.application'
@@ -192,5 +191,6 @@ IMPLE_JWT = {
 DJOSER = {
     'SERIALIZERS': {
         'current_user': 'Campusauth.serializers.UserSerializer'
-    }
+    },
+    # 'LOGIN_FIELD': 'avatar'
 }

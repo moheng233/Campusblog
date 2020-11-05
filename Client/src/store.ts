@@ -1,5 +1,5 @@
 import { writable as localwritable } from 'svelte-persistent-store/dist/local';
-import { derived, get, Readable, readable, Writable } from 'svelte/store'
+import { derived, get, Readable, readable, writable, Writable } from 'svelte/store'
 import { ClientApi, IBlog } from './tool/api';
 import type {IUser} from './tool/api';
 
@@ -25,6 +25,8 @@ let noLogin:IUser = {
     "last_login": new Date().toString(),
     "username": "noLogin"
 }
+
+export const bid = writable<number>(undefined)
 
 export const User = derived<[Readable<boolean>], IUser>([LoginSwitch], ([$LoginSwitch],set) => {
     if($LoginSwitch == true){

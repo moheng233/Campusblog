@@ -9,10 +9,12 @@
     import { fade, fly } from "svelte/transition";
     import { ClientApi } from "../tool/api";
     import { link } from 'svelte-spa-router/Router.svelte';
+    import { debug } from 'svelte/internal';
 
-    export let name: string = "name";
-
-    let promis = ClientApi.object.BlogList(1);
+    let promis = ClientApi.object.BlogList(1).then(r => {
+        console.log(r)
+        return r;
+    });
 
 </script>
 
@@ -28,7 +30,7 @@
                 created_at={moment(blog.created_at).fromNow()}
                 title={blog.title}
                 subtitle={blog.subtitle}
-                subimage={blog.subimage} />
+                subimage={blog.subimage.file} />
         {/each}
     {/await}
 </div>

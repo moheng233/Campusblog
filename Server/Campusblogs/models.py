@@ -6,6 +6,20 @@ from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
 
+class UploadImages(models.Model):
+    user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,verbose_name="作者",related_name="uploadimage")
+    # blog = ForeignKey(Blogs, on_delete=models.CASCADE, verbose_name="博客", related_name="uploadimage")
+    file = models.ImageField('图片',upload_to='static/upload')
+
+    def __str__(self) -> str:
+        return str(self.file)
+
+    class Meta:
+        verbose_name = '上传图片'
+        verbose_name_plural = verbose_name
+    
+    pass
+
 class Blogs(models.Model):
     title = CharField('标题',max_length=100)
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,verbose_name="作者",related_name="blogs")
@@ -15,19 +29,13 @@ class Blogs(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False,verbose_name="创建时间")
     updated_at = models.DateTimeField(auto_now=True, null=False,verbose_name="修改时间")
 
-    subimage = models.ImageField('头图',upload_to='static/blogs')
+    subimage = ForeignKey(UploadImages,on_delete=models.CASCADE,verbose_name="头图",related_name="subimage")
 
     activation = models.BooleanField('激活',default=True)
-
-    def __unicode__(self):
-        return self.title
 
     class Meta:
         verbose_name = '文章'
         verbose_name_plural = verbose_name
-
-    def __str__(self) -> str:
-        return self.title
 
     pass
 

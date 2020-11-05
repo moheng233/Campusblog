@@ -28,7 +28,7 @@
                     由{post_user}发布在
                     <time datetime="">{created_at}</time>
                 </p>
-                <div class="rte">
+                <div class="rte" style="max-width: 400px;word-break:break-all;">
                     <meta charset="utf-8" /><span>{subtitle}</span>
                 </div>
             </div>

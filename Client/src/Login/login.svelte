@@ -35,7 +35,13 @@
                     });
                     push("/");
                 })
-                .catch();
+                .catch((err: {detail: string}) => {
+                    if(err.detail == "No active account found with the given credentials"){
+                        M.toast({
+                            html: "密码错误",
+                        });
+                    }
+                });
         }
     };
 
