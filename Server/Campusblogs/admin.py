@@ -26,23 +26,21 @@ class BlogsAdmin(admin.ModelAdmin):
 
     list_display = ['title','user','activation']
 
-@admin.register(Posts)
-class PostsAdmin(admin.ModelAdmin):
-    list_display = ['blog','user']
-
-
+# @admin.register(Posts)
+# class PostsAdmin(admin.ModelAdmin):
+#     list_display = ['blog','user']
 
 @admin.register(Reports)
 class ReportsAdmin(admin.ModelAdmin):
-    list_display = ['user','blog','created_at','reason','permit']
+    list_display = ['user','informants','created_at','reason','permit']
     list_filter = ['permit','created_at']
     actions = ['ReportsPermit']
 
     def ReportsPermit(self, request, queryset:QuerySet):
         queryset.update(permit=True)
         for Report in queryset.all():
-            Report.blog.activation = False;
-            Report.blog.save()
+            Report.informants.is_active = False;
+            Report.informants.save()
         pass;
 
     ReportsPermit.short_description = "许可"

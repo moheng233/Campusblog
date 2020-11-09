@@ -46,6 +46,7 @@
     "svelte-persistent-store": "^0.1.4",
     "svelte-simple-modal": "^0.6.1",
     "svelte-spa-router": "^3.0.3",
+    "sveltedoc-parser": "^3.0.4",
     "vditor": "^3.6.0"
   }
 }

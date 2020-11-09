@@ -48,7 +48,7 @@ export interface IBlogCreater {
 
 export interface IPost {
     "id": number,
-    "blog": number,
+    "informants": number,
     "user": {
         "id": number,
         "last_name": string
@@ -84,7 +84,7 @@ export class ClientApi {
      */
     static object = new ClientApi();
 
-    HTTPHeader: string = "http://127.0.0.1:8000";
+    HTTPHeader: string = "http://2.test.momemg.ltd";
     PageSize: number = 20;
 
     async decode(data: Response, type: "json" | "msgpack" = "json") {
@@ -302,11 +302,11 @@ export class ClientApi {
     }
 
     async BlogReport(data: {
-        blog: number,
+        informants: number,
         reason: string
     }) {
         return await this.api<{
-            blog: number,
+            informants: number,
             reason: string
         },IReport>("/reports/", undefined, data,"POST",true);
     }

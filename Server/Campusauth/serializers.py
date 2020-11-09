@@ -22,7 +22,7 @@ class UserSerializer(UserSerializer):
             "email",
             'avatar'
         )
-        read_only_fields = (settings.LOGIN_FIELD,'last_login','id')
+        read_only_fields = (getattr(settings,'LOGIN_FIELD'),'last_login','id')
 
 class SetUserAvatarSerializer(serializers.ModelSerializer):
     class Meta:

@@ -8,6 +8,7 @@
 	import register from "./Login/register.svelte";
 	import home from "./Home/home.svelte";
 	import blogContent from "./Home/blogContent.svelte";
+	import me from "./Login/me.svelte";
 
 	import { push,pop } from 'svelte-spa-router/Router.svelte';
 	import wrap from "svelte-spa-router/wrap";
@@ -15,7 +16,6 @@
 	import * as store from "./store";
 	import BlogEdit from "./Home/blogEdit.svelte";
 	import { ClientApi } from "./tool/api";
-	import type {IUser} from "./tool/api";
 
 	let Login = store.LoginSwitch;
 
@@ -79,6 +79,18 @@
 				HeaderText: {
 					h1: "我盲猜你没有账号！",
 					h2: "你是来注册的吧！"
+				}
+			}
+		}),
+		"/auth/me": wrap<IPage>({
+			component: me,
+			userData: {
+				title: "我的",
+				HeaderType: "home",
+				hideHeader: false,
+				HeaderText: {
+					h1: "在？看看自己",
+					h2: "是个什么沙雕玩意"
 				}
 			}
 		})

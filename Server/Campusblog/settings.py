@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from typing import OrderedDict
+
+# from constance import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +30,7 @@ SECRET_KEY = 'rft@o#j5wcwm-6&gh658(s(w6(z^)e)l8r8y2cjli3=234s&=9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '2.test.momemg.ltd', '1.test.momemg.ltd']
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
@@ -60,7 +64,10 @@ INSTALLED_APPS = [
     'Campusblogs',
     'rest_framework',
     'rest_framework.authtoken',
-    'martor'
+    'import_export',
+    'martor',
+    'constance',
+    'constance.backends.database'
 ]
 
 MIDDLEWARE = [
@@ -78,7 +85,9 @@ ROOT_URLCONF = 'Campusblog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,7 +102,7 @@ TEMPLATES = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        
+
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -116,10 +125,10 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'Campusblog.wsgi.application'
 
-
-# Database
+########################################################################
+# 数据库
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+########################################################################
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -137,14 +146,23 @@ DATABASES = {
 #     }
 # }
 
+########################################################################
+# 缓存
+########################################################################
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:1088'
     }
 }
-
+CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
+########################################################################
+#
+# 验证方案
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+#
+########################################################################
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -161,9 +179,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+########################################################################
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
+########################################################################
 
 LANGUAGE_CODE = 'zh-Hans'
 
@@ -175,18 +194,79 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+########################################################################
+# 静态文件
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+########################################################################
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
+STATIC_ROOT = 'static'
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static'
+# ]
+
+#####################################################################################
+#
+#   网站设置
+#
+#####################################################################################
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
+
+CONSTANCE_CONFIG = {
+    'site_name': ('校园博客', '网站标题'),
+    'site_description': ('校园博客', '站点描述'),
+    'sensitive_words': ('', '敏感词')
+}
+
+CONSTANCE_CONFIG_FIELDSETS = OrderedDict([
+    ('站点设置', ('site_name', 'site_description')),
+    ('敏感词设置', ('sensitive_words',))
+])
+
+#####################################################################################
+#
+#   后台设置
+#
+#####################################################################################
+
+# SIMPLEUI_HOME_PAGE = getattr(config,'site_name')
+
+SIMPLEUI_DEFAULT_ICON = False
+SIMPLEUI_STATIC_OFFLINE = True
+SIMPLEUI_HOME_INFO = False
+
+SIMPLEUI_CONFIG = {
+    # 'dynamic': True,
+    # 'system_keep': True,
+    # 'menus': [{
+    #     'name': '系统管理',
+    #     'icon': 'fab fa-microsoft',
+    #     'models': [{
+    #         'app': 'Campusauth',
+    #         'icon': 'far fa-user',
+    #         'url': '/Campusauth/user/'
+    #     }, {
+    #         'app': 'auth',
+    #         'icon': 'fas fa-users-cog',
+    #         'url': '/admin/auth/group/'
+    #     }]
+    # }, {
+    #     'name': '内容管理',
+    #     'icon': 'fas fa-globe-americas'
+    # }]
+}
 
 IMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('Bearer','JWT'),
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
 }
+
+#####################################################################################
+#
+#   DJOSER 设置
+#
+#####################################################################################
 
 DJOSER = {
     'SERIALIZERS': {
@@ -194,3 +274,4 @@ DJOSER = {
     },
     # 'LOGIN_FIELD': 'avatar'
 }
+#####################################################################################

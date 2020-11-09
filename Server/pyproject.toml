@@ -19,6 +19,9 @@ drf-extra-fields = {git = "https://github.com/lmbringas/drf-extra-fields.git"}
 djangorestframework-rapidjson = "^0.1.4"
 djangorestframework-msgpack = {git = "https://github.com/juanriaza/django-rest-framework-msgpack.git"}
 django-utils-six = "^2.0"
+django-import-export = "^2.4.0"
+django-constance = {extras = ["database"], version = "^2.7.0"}
+python-memcached = "^1.59"
 
 [tool.poetry.dev-dependencies]
 

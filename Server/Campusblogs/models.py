@@ -33,6 +33,9 @@ class Blogs(models.Model):
 
     activation = models.BooleanField('激活',default=True)
 
+    def __str__(self) -> str:
+        return str(self.title)
+
     class Meta:
         verbose_name = '文章'
         verbose_name_plural = verbose_name
@@ -54,7 +57,7 @@ class Posts(models.Model):
 
 class Reports(models.Model):
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="举报人", related_name="informant");
-    blog = ForeignKey(Blogs, on_delete=models.CASCADE, verbose_name="博客", related_name="blog")
+    informants = ForeignKey(settings.AUTH_USER_MODEL,null=True ,on_delete=models.CASCADE, verbose_name="被举报人", related_name="informants")
 
     created_at = models.DateTimeField(auto_now_add=True, null=False,verbose_name="创建时间")
 

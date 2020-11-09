@@ -4,7 +4,6 @@ db.sqlite3
 */migrations
 */__pycache__
 
-static/blogs
-static/upload
+static
 
 *.pyc

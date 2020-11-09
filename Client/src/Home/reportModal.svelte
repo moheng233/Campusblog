@@ -14,7 +14,7 @@
 
     const onClickBtn = () => {
         ClientApi.object.BlogReport({
-            blog: bid,
+            informants: bid,
             reason: content
         }).then(e => {
             m.toast({
