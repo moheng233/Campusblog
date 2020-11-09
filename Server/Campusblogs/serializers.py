@@ -77,7 +77,7 @@ class BlogsSerializer(serializers.ModelSerializer):
 class ReportsSerializer(serializers.ModelSerializer): 
     class Meta:
         model = Reports
-        fields = ('user','blog','created_at','reason','permit')
+        fields = ('user','informants','created_at','reason','permit')
         read_only_fields = ('user','permit')
 
     def create(self, validated_data):

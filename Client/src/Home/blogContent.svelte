@@ -10,7 +10,7 @@
 
     import Vditor from "vditor";
 
-    import { bid } from '../store';
+    import { blog_uid } from '../store';
 
     import moment from "moment";
     import InputField from "../Components/InputField/InputField.svelte";
@@ -33,6 +33,8 @@
             editType = "report";
         }
 
+        blog_uid.set(r.user.id);
+
         return r;
     });
 
@@ -45,8 +47,6 @@
     let PostContent: string = "";
 
     const { open } = getContext('simple-modal');
-
-    bid.set(params.id);
 
     async function PostCreate() {
         ClientApi.object.BlogPost((await promise).id, PostContent).then((r) => {

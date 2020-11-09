@@ -140,6 +140,17 @@ python-versions = ">=3.5"
 Django = ">=2.2"
 
 [[package]]
+name = "django-http-proxy"
+version = "0.4.3"
+description = "A simple HTTP proxy for the Django framework."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = ">=1.6"
+
+[[package]]
 name = "django-import-export"
 version = "2.4.0"
 description = "Django application and library for importing and exporting data with included admin integration."
@@ -686,7 +697,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "8524f37bd547566352e51e69a1679bf15860f1d592a5d596490b9b12e9f7777f"
+content-hash = "b893be9a8b6406f2fcf4afa966f6276032e5a3cf1c08898c2e17336ed0026545"
 
 [metadata.files]
 asgiref = [
@@ -790,6 +801,10 @@ django-constance = [
 django-cors-headers = [
     {file = "django-cors-headers-3.5.0.tar.gz", hash = "sha256:db82b2840f667d47872ae3e4a4e0a0d72fbecb42779b8aa233fa8bb965f7836a"},
     {file = "django_cors_headers-3.5.0-py3-none-any.whl", hash = "sha256:9322255c296d5f75089571f29e520c83ff9693df17aa3cf9f6a4bea7c6740169"},
+]
+django-http-proxy = [
+    {file = "django-http-proxy-0.4.3.tar.gz", hash = "sha256:90ec065d8474dd1cd82b9c50a298cefe325efc0075aedeffafa533db06f0f59a"},
+    {file = "django_http_proxy-0.4.3-py2-none-any.whl", hash = "sha256:abece8055a51d6f13cccddbe7e23c8c17c55c13948650ed756c65b71d381b37b"},
 ]
 django-import-export = [
     {file = "django-import-export-2.4.0.tar.gz", hash = "sha256:401d76eca0a5c6cf43bffed16c06e509b9044ce8f6bcff264b776e3952830f1a"},

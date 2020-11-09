@@ -30,28 +30,13 @@ SECRET_KEY = 'rft@o#j5wcwm-6&gh658(s(w6(z^)e)l8r8y2cjli3=234s&=9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '2.test.momemg.ltd', '1.test.momemg.ltd']
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'WWW-Authenticate'
-]
+ALLOWED_HOSTS = []
 
 # Application definition
 
 INSTALLED_APPS = [
-    'simpleui',
     'corsheaders',
+    'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,9 +56,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -151,11 +136,10 @@ DATABASES = {
 ########################################################################
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:1088'
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
     }
 }
-CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
+# CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
 ########################################################################
 #
 # 验证方案
@@ -205,6 +189,28 @@ STATIC_ROOT = 'static'
 # STATICFILES_DIRS = [
 #     BASE_DIR / 'static'
 # ]
+
+########################################################################
+#
+# CORS设置
+#
+########################################################################
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'WWW-Authenticate'
+]
+
 
 #####################################################################################
 #

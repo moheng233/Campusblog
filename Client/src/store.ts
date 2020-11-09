@@ -26,7 +26,7 @@ let noLogin: IUser = {
     "username": "noLogin"
 }
 
-export const bid = writable<number>(undefined)
+export const blog_uid = writable<number>(undefined)
 
 export const User = derived<[Readable<boolean>], IUser>([LoginSwitch], ([$LoginSwitch], set) => {
     if ($LoginSwitch == true) {

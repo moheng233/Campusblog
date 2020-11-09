@@ -84,7 +84,7 @@ export class ClientApi {
      */
     static object = new ClientApi();
 
-    HTTPHeader: string = "http://2.test.momemg.ltd";
+    HTTPHeader: string = "http://localhost:8000";
     PageSize: number = 20;
 
     async decode(data: Response, type: "json" | "msgpack" = "json") {
@@ -160,7 +160,7 @@ export class ClientApi {
             } else {
                 let b: IErr = await this.decode(r, type);
                 if (r.status == 401 && b.code == "token_not_valid" && token === true) {
-                    let { access } = await this.AuthRefToken(get(Login.RefToken));
+                    let { access } = await this.AuthRefToken(get(Login.RefToken))
 
                     Login.LoginToken.set(access);
 

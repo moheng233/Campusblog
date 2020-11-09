@@ -4,17 +4,16 @@
     import InputField from '../Components/InputField/InputField.svelte';
     import { ClientApi } from '../tool/api';
 
-    import { bid as storebid } from '../store';
+    import { blog_uid as storeblog_uid } from '../store';
     import { get } from 'svelte/store';
 
     let { close } = getContext('simple-modal');
 
     let content: string = ""
-    let bid = get(storebid) as number;
 
     const onClickBtn = () => {
         ClientApi.object.BlogReport({
-            informants: bid,
+            informants: get(storeblog_uid) as number,
             reason: content
         }).then(e => {
             m.toast({

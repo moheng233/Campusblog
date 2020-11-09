@@ -30,9 +30,9 @@ router.register(r'reports', views.ReportsViewSet)
 admin.site.site_header = getattr(config,'site_name')
 
 urlpatterns = [
+    path('',include(router.urls)),
     path('admin/', admin.site.urls),
     path('auth/', include('Campusauth.urls')),
-    path('',include(router.urls)),
     path('martor/', include('martor.urls')),
     path('api/', include('rest_framework.urls', namespace='rest_framework')),
 ]

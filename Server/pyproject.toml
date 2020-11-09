@@ -22,6 +22,7 @@ django-utils-six = "^2.0"
 django-import-export = "^2.4.0"
 django-constance = {extras = ["database"], version = "^2.7.0"}
 python-memcached = "^1.59"
+django-http-proxy = "^0.4.3"
 
 [tool.poetry.dev-dependencies]
 
