@@ -246,6 +246,15 @@ export class ClientApi {
 
     }
 
+    async ClassifyList() {
+        let r = await this.api<{},{
+            "id": number,
+            "title": string
+        }[]>(`/classify/`,undefined,undefined,"GET",true);
+
+        return r;
+    }
+
     /**
      * 获得Blog列表
      * @param page 页

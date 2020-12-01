@@ -151,14 +151,14 @@
 									class="user-account dropdown-button"><img
 										class="circle"
 										style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
-										src="{ User.avatar.file }" />{ User.username }</a>
+										src="{ User.avatar?.file ?? "https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png" }" />{ User.username }</a>
 									{#if UserDown}
 										<ul
 										in:slide out:fade
 										class="dropdown-content"
 										style="white-space: nowrap;position: absolute;opacity: 1;display: block;margin-left: 20px;">
 											<li>
-												<a href="#/auth/users/me">用户</a>
+												<a href="#/auth/me">用户</a>
 											</li>
 											<li>
 												<a on:click={ClientApi.object.AuthLoginOut}>退出登陆</a>

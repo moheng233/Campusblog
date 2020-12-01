@@ -23,6 +23,7 @@ from constance import config
 
 router = routers.DefaultRouter()
 router.register(r'blogs', views.BlogViewSet)
+router.register(r'classify',views.ClassifyViewSet)
 router.register(r'uploadimage', views.UploadImagesViewSet)
 router.register(r'posts', views.PostViewSet)
 router.register(r'reports', views.ReportsViewSet)

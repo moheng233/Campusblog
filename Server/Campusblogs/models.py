@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.fields import BooleanField, CharField, TextField
+from django.db.models.fields import BooleanField, CharField, TextField, IntegerField
 from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
@@ -20,11 +20,27 @@ class UploadImages(models.Model):
     
     pass
 
+class Classify(models.Model):
+    title = CharField('分类名称',max_length=100);
+
+    def __str__(self) -> str:
+        return str(self.title)
+
+    class Meta:
+        verbose_name = '分类'
+        verbose_name_plural = verbose_name
+
+    pass
+
 class Blogs(models.Model):
     title = CharField('标题',max_length=100)
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,verbose_name="作者",related_name="blogs")
     subtitle = CharField('二级标题',max_length=200,default='')
     content = TextField('内容',default='')
+
+    classify = ForeignKey(Classify,on_delete=models.CASCADE,verbose_name="分类",related_name="blogs",null=True);
+
+    fabulous = IntegerField(verbose_name="点赞数",default=0)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False,verbose_name="创建时间")
     updated_at = models.DateTimeField(auto_now=True, null=False,verbose_name="修改时间")
@@ -57,7 +73,7 @@ class Posts(models.Model):
 
 class Reports(models.Model):
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="举报人", related_name="informant");
-    informants = ForeignKey(settings.AUTH_USER_MODEL,null=True ,on_delete=models.CASCADE, verbose_name="被举报人", related_name="informants")
+    informants = ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE, verbose_name="被举报人", related_name="informants")
 
     created_at = models.DateTimeField(auto_now_add=True, null=False,verbose_name="创建时间")
 

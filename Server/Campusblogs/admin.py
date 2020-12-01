@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 from martor.widgets import AdminMartorWidget
 
-from Campusblogs.models import Blogs, Posts , Reports, UploadImages
+from Campusblogs.models import Blogs, Posts , Reports, UploadImages, Classify
 
 @admin.register(UploadImages)
 class UploadImagesAdmin(admin.ModelAdmin):
@@ -21,10 +21,10 @@ class BlogsAdmin(admin.ModelAdmin):
 
     list_per_page = 20
 
-    list_filter = ('created_at','activation')
+    list_filter = ('created_at','classify','activation')
     # fk_fields = ('title',)
 
-    list_display = ['title','user','activation']
+    list_display = ['title','user','classify','activation']
 
 # @admin.register(Posts)
 # class PostsAdmin(admin.ModelAdmin):
@@ -45,3 +45,6 @@ class ReportsAdmin(admin.ModelAdmin):
 
     ReportsPermit.short_description = "许可"
 
+@admin.register(Classify)
+class ClassifyAdmin(admin.ModelAdmin):
+    pass;

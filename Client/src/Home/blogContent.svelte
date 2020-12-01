@@ -10,8 +10,6 @@
 
     import Vditor from "vditor";
 
-    import { blog_uid } from '../store';
-
     import moment from "moment";
     import InputField from "../Components/InputField/InputField.svelte";
     import Button from "../Components/Button/Button.svelte";
@@ -19,6 +17,7 @@
     import { link, push } from "svelte-spa-router/Router.svelte";
 
     import reportModal from './reportModal.svelte';
+import Blog from "./blog.svelte";
 
     export let params: { id: number };
 
@@ -32,9 +31,6 @@
         } else {
             editType = "report";
         }
-
-        blog_uid.set(r.user.id);
-
         return r;
     });
 
@@ -130,6 +126,7 @@
         on:mouseleave={() => {
             floatingbtn = false;
         }}>
+        {#await promise then blog}
         {#if editType == 'edit'}
             <a
                 class="btn-floating btn-large red"
@@ -138,26 +135,33 @@
                 <i class="large material-icons">mode_edit</i>
             </a>
         {:else if editType == 'report'}
-            <a class="btn-floating btn-large red" on:click="{() => {open(reportModal)}}">
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <a class="btn-floating btn-large red" on:click="{() => {open(reportModal,{uid: blog.user.id})}}">
                 <i class="large material-icons">report</i>
             </a>
         {/if}
+        {/await}
+        
 
         {#if floatingbtn}
             <ul style="" in:slide out:fade>
                 <li>
+                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a class="btn-floating red"><i
                             class="material-icons">insert_chart</i></a>
                 </li>
                 <li>
+                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a class="btn-floating yellow darken-1"><i
                             class="material-icons">format_quote</i></a>
                 </li>
                 <li>
+                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a class="btn-floating green"><i
                             class="material-icons">publish</i></a>
                 </li>
                 <li>
+                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a class="btn-floating blue"><i
                             class="material-icons">attach_file</i></a>
                 </li>
