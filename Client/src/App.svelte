@@ -2,7 +2,7 @@
 	import Router, { link } from "svelte-spa-router/Router.svelte";
 	import type { IPage } from "./main";
 
-	import Modal from "svelte-simple-modal/src/Modal.svelte"
+	import Modal from "svelte-simple-modal/src/Modal.svelte";
 
 	import login from "./Login/login.svelte";
 	import register from "./Login/register.svelte";
@@ -10,12 +10,14 @@
 	import blogContent from "./Home/blogContent.svelte";
 	import me from "./Login/me.svelte";
 
-	import { push,pop } from 'svelte-spa-router/Router.svelte';
+	import { push, pop } from "svelte-spa-router/Router.svelte";
 	import wrap from "svelte-spa-router/wrap";
 	import { fade, slide } from "svelte/transition";
 	import * as store from "./store";
 	import BlogEdit from "./Home/blogEdit.svelte";
 	import { ClientApi } from "./tool/api";
+	import type { keys } from "lodash";
+	import type { WrappedComponent } from "svelte-spa-router";
 
 	let Login = store.LoginSwitch;
 
@@ -29,8 +31,9 @@
 		},
 	};
 
-	export let RouterList: {} = {
-		"/": wrap<IPage>({
+	export let RouterList: { [keys: string]: WrappedComponent } = {
+		"/": wrap({
+			// @ts-ignore
 			component: home,
 			userData: {
 				title: "主页",
@@ -42,7 +45,8 @@
 				},
 			},
 		}),
-		"/edit/:id": wrap<IPage>({
+		"/edit/:id": wrap({
+			// @ts-ignore
 			component: BlogEdit,
 			userData: {
 				title: "发布你的沙雕言论",
@@ -50,7 +54,8 @@
 				hideHeader: true,
 			},
 		}),
-		"/blog/:id": wrap<IPage>({
+		"/blog/:id": wrap({
+			// @ts-ignore
 			component: blogContent,
 			userData: {
 				title: "详细",
@@ -58,7 +63,8 @@
 				hideHeader: true,
 			},
 		}),
-		"/auth/login": wrap<IPage>({
+		"/auth/login": wrap({
+			// @ts-ignore
 			component: login,
 			userData: {
 				title: "登陆",
@@ -70,7 +76,8 @@
 				},
 			},
 		}),
-		"/auth/register": wrap<IPage>({
+		"/auth/register": wrap({
+			// @ts-ignore
 			component: register,
 			userData: {
 				title: "注册",
@@ -78,11 +85,12 @@
 				hideHeader: false,
 				HeaderText: {
 					h1: "我盲猜你没有账号！",
-					h2: "你是来注册的吧！"
-				}
-			}
+					h2: "你是来注册的吧！",
+				},
+			},
 		}),
-		"/auth/me": wrap<IPage>({
+		"/auth/me": wrap({
+			// @ts-ignore
 			component: me,
 			userData: {
 				title: "我的",
@@ -90,10 +98,10 @@
 				hideHeader: false,
 				HeaderText: {
 					h1: "在？看看自己",
-					h2: "是个什么沙雕玩意"
-				}
-			}
-		})
+					h2: "是个什么沙雕玩意",
+				},
+			},
+		}),
 	};
 
 	let UserDown: boolean = false;
@@ -113,6 +121,7 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y-missing-attribute -->
 <style type="scss" global>
 	@import "./styles/gallery.scss";
 	/* @import "./styles/materialize.scss"; */
@@ -140,28 +149,43 @@
 						{RouterData.title}
 					</a>
 					<ul class="right hide-on-med-and-down">
-						<li><a href="#/" class="site-nav__link">主页</a></li>
+						<li>
+							<a href="/" class="site-nav__link" use:link>主页</a>
+						</li>
+						<li>
+							<a
+								href="/search"
+								class="site-nav__link"
+								use:link>搜索</a>
+						</li>
 						{#if $Login == true}
-							<li on:mouseenter={() => {UserDown = true}}
-								on:mouseleave={() => {UserDown = false}}>
+							<li
+								on:mouseenter={() => {
+									UserDown = true;
+								}}
+								on:mouseleave={() => {
+									UserDown = false;
+								}}>
 								{#await store.getUser() then User}
 									<a
-									use:link
-									href="/auth/me"
-									class="user-account dropdown-button"><img
-										class="circle"
-										style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
-										src="{ User.avatar?.file ?? "https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png" }" />{ User.username }</a>
+										use:link
+										href="/auth/me"
+										class="user-account dropdown-button"><img
+											class="circle"
+											style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
+											src={User.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'} />{User.last_name}</a>
 									{#if UserDown}
 										<ul
-										in:slide out:fade
-										class="dropdown-content"
-										style="white-space: nowrap;position: absolute;opacity: 1;display: block;margin-left: 20px;">
+											in:slide
+											out:fade
+											class="dropdown-content"
+											style="white-space: nowrap;position: absolute;opacity: 1;display: block;margin-left: 20px;">
 											<li>
 												<a href="#/auth/me">用户</a>
 											</li>
 											<li>
-												<a on:click={ClientApi.object.AuthLoginOut}>退出登陆</a>
+												<a
+													on:click={ClientApi.object.AuthLoginOut}>退出登陆</a>
 											</li>
 										</ul>
 									{/if}
@@ -201,7 +225,11 @@
 				in:fade>
 				<div class="nav-wrapper">
 					<div class="container">
-						<a class="back-btn" on:click="{() => {pop()}}">
+						<a
+							class="back-btn"
+							on:click={() => {
+								pop();
+							}}>
 							<i class="material-icons">arrow_back</i>
 							<span>返回</span>
 						</a>
@@ -212,7 +240,10 @@
 	</div>
 	<div>
 		<Modal>
-			<Router routes={RouterList} on:routeLoaded={onRouteLoaded} restoreScrollState={true} />
+			<Router
+				routes={RouterList}
+				on:routeLoaded={onRouteLoaded}
+				restoreScrollState={true} />
 		</Modal>
 	</div>
 </main>

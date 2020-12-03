@@ -25,6 +25,7 @@ python-memcached = "^1.59"
 django-http-proxy = "^0.4.3"
 
 [tool.poetry.dev-dependencies]
+django-seed = "^0.2.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

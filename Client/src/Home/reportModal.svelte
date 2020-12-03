@@ -30,5 +30,6 @@
     <InputField label_name="快！开始你的表演！" bind:value="{content}" ></InputField>
 </div>
 <div class="modal-footer">
+    <!-- svelte-ignore a11y-missing-attribute -->
     <a class="waves-effect waves-green btn-flat" on:click="{onClickBtn}">确定</a>
 </div>

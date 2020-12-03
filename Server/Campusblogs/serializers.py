@@ -47,14 +47,23 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'blog', 'content', 'created_at')
 
 
+class ClassifyListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Classify
+        fields = ('id', 'title')
+
+
 class BlogsListSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     subimage = UploadImagesSerializer()
     user = BlogsUserSerializer(required=False)
+    classify = ClassifyListSerializer(read_only=True)
 
     class Meta:
         model = Blogs
-        fields = ('id', 'title', 'user', 'subtitle',
+        fields = ('id', 'title', 'user', 'classify', 'subtitle',
                   'subimage', 'created_at', 'updated_at')
 
 
@@ -72,16 +81,8 @@ class BlogsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blogs
-        fields = ('id', 'title', 'user', 'content', 'subtitle',
+        fields = ('id', 'title', 'user', 'classify', 'content', 'subtitle',
                   'subimage', 'created_at', 'updated_at', 'posts')
-
-
-class ClassifyListSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = Classify
-        fields = ('id', 'title')
 
 
 class ClassifySerializer(serializers.ModelSerializer):

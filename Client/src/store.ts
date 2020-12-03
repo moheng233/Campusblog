@@ -1,52 +1,64 @@
-import { writable as localwritable } from 'svelte-persistent-store/dist/local';
-import { derived, get, Readable, readable, writable, Writable } from 'svelte/store'
-import { ClientApi, IBlog } from './tool/api';
-import type { IUser } from './tool/api';
 
-export const Login = {
-    LoginToken: localwritable<string>('LoginToken', ''),
-    RefToken: localwritable<string>('RefToken', ''),
-}
+    import { writable as localwritable } from "svelte-persistent-store/dist/local";
+    import {
+        derived,
+        get,
+        Readable,
+    } from "svelte/store";
+    import { ClientApi } from "./tool/api";
+    import type { IUser } from "./tool/api";
 
-export const LoginSwitch = derived([Login.LoginToken, Login.RefToken], ([$a, $b], set) => {
-    if ($a != "" && $b != "") {
-        set(true);
-    } else {
-        set(false);
-    }
-}, false)
+    export const Login = {
+        LoginToken: localwritable<string>("LoginToken", ""),
+        RefToken: localwritable<string>("RefToken", ""),
+    };
 
-let noLogin: IUser = {
-    "avatar": undefined,
-    "first_name": "noLogin",
-    "id": -1,
-    "email": "noLogin",
-    "last_name": "noLogin",
-    "last_login": new Date().toString(),
-    "username": "noLogin"
-}
+    export const LoginSwitch = derived(
+        [Login.LoginToken, Login.RefToken],
+        ([$a, $b], set) => {
+            if ($a != "" && $b != "") {
+                set(true);
+            } else {
+                set(false);
+            }
+        },
+        false
+    );
 
-export const User = derived<[Readable<boolean>], IUser>([LoginSwitch], ([$LoginSwitch], set) => {
-    if ($LoginSwitch == true) {
-        ClientApi.object.UsersGet().then((r) => {
-            set(r);
-        })
-    } else {
-        set(noLogin)
-    }
+    let noLogin: IUser = {
+        avatar: undefined,
+        first_name: "noLogin",
+        id: -1,
+        email: "noLogin",
+        last_name: "noLogin",
+        last_login: new Date().toString(),
+        username: "noLogin",
+    };
 
-}, undefined)
+    export const User = derived<[Readable<boolean>], IUser>(
+        [LoginSwitch],
+        ([$LoginSwitch], set) => {
+            if ($LoginSwitch == true) {
+                ClientApi.object.UsersGet().then((r) => {
+                    set(r);
+                });
+            } else {
+                set(noLogin);
+            }
+        },
+        undefined
+    );
 
-export const getUser = () => {
-    return new Promise<IUser>((res, rej) => {
-        if (get(User) == undefined) {
-            User.subscribe((r) => {
-                if (r != undefined) {
-                    res(r);
-                }
-            })
-        } else {
-            res(get(User))
-        }
-    })
-}
+    export const getUser = () => {
+        return new Promise<IUser>((res, rej) => {
+            if (get(User) == undefined) {
+                User.subscribe((r) => {
+                    if (r != undefined) {
+                        res(r);
+                    }
+                });
+            } else {
+                res(get(User));
+            }
+        });
+    };

@@ -1,5 +1,6 @@
 django
 .vscode
+.venv
 db.sqlite3
 */migrations
 */__pycache__

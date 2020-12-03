@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'import_export',
     'martor',
     'constance',
-    'constance.backends.database'
+    'constance.backends.database',
+    'django_seed'
 ]
 
 MIDDLEWARE = [

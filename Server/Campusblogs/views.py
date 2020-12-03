@@ -1,11 +1,13 @@
 from collections import OrderedDict
 
 from django.contrib.auth.models import User
+from django.db.models.manager import BaseManager
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework import filters
 
 from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
 from Campusblogs.serializers import (BlogsListSerializer, BlogsSerializer, ClassifyListSerializer, ClassifySerializer,
@@ -29,6 +31,23 @@ class BlogViewSet(viewsets.ModelViewSet):
     serializer_class = BlogsListSerializer
 
     pagination_class = BlogPagePagination
+
+    filter_backends = (filters.SearchFilter,filters.OrderingFilter)
+
+    search_fields = ("title",)
+    ordering_fields = ('created_at', 'updated_at')
+    classify_fields = "classify"
+
+    def get_queryset(self):
+        queryset: BaseManager = super().get_queryset()
+
+        classify_params = self.request.query_params.get('classify',None)
+        if classify_params is not None:
+            classify = Classify.objects.get(id=classify_params)
+            queryset = queryset.filter(classify=classify)
+        
+        return queryset
+
 
     def get_serializer_class(self):
         if(self.action == 'list'):

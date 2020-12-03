@@ -170,6 +170,7 @@
     </div>
 </div>
 <div class="fixed-action-btn">
+    <!-- svelte-ignore a11y-missing-attribute -->
     <a class="btn-floating btn-large red" on:click={onCheckClick}><i
             class="large material-icons">check</i></a>
 </div>

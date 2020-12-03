@@ -6,7 +6,7 @@
     import { ClientApi } from "../tool/api";
     import type { IBlog, IUser } from "../tool/api";
 
-    import { getContext, onMount, setContext } from 'svelte';
+    import { getContext, onMount, setContext } from "svelte";
 
     import Vditor from "vditor";
 
@@ -14,24 +14,27 @@
     import InputField from "../Components/InputField/InputField.svelte";
     import Button from "../Components/Button/Button.svelte";
     import { fade, fly, slide } from "svelte/transition";
-    import { link, push } from "svelte-spa-router/Router.svelte";
+    import { link, replace,location } from "svelte-spa-router/Router.svelte";
 
-    import reportModal from './reportModal.svelte';
-import Blog from "./blog.svelte";
+    import { memoize } from "lodash";
+
+    import reportModal from "./reportModal.svelte";
 
     export let params: { id: number };
 
     let floatingbtn: boolean = false;
     let editType: "edit" | "report" = "edit";
 
-    let promise = ClientApi.object.BlogGet(params.id).then((r) => {
-        let user = $UserStore;
-        if (user.id == r.user.id) {
-            editType = "edit";
-        } else {
-            editType = "report";
-        }
-        return r;
+    let BlogGet = memoize(async () => {
+        return ClientApi.object.BlogGet(params.id).then((r) => {
+            let user = $UserStore;
+            if (user.id == r.user.id) {
+                editType = "edit";
+            } else {
+                editType = "report";
+            }
+            return r;
+        });
     });
 
     let preview = (node: HTMLDivElement, blog: IBlog) => {
@@ -42,19 +45,24 @@ import Blog from "./blog.svelte";
 
     let PostContent: string = "";
 
-    const { open } = getContext('simple-modal');
+    const { open } = getContext("simple-modal");
 
     async function PostCreate() {
-        ClientApi.object.BlogPost((await promise).id, PostContent).then((r) => {
-            m.toast({
-                html: "回复成功",
+        ClientApi.object
+            .BlogPost((await BlogGet()).id, PostContent)
+            .then((r) => {
+                m.toast({
+                    html: "回复成功",
+                });
+                // promise = ClientApi.object.BlogGet(params.id);
+                BlogGet.cache = new memoize.Cache;
+                replace($location);
+                PostContent = "";
             });
-            promise = ClientApi.object.BlogGet(params.id);
-            PostContent = "";
-        });
     }
 </script>
 
+<!-- svelte-ignore component-name-lowercase -->
 <style lang="scss" global>
     // @import "../styles/github-markdown.scss";
 
@@ -71,13 +79,13 @@ import Blog from "./blog.svelte";
         <a
             class="go-to-comments btn-floating btn-large waves-effect waves-light active"
             style="background-color: rgb(203, 199, 159);">
-            <i class="material-icons">回复</i>
+            <i class="material-icons">comment</i>
         </a>
     </div>
     <div
         style="margin-top: 184px; padding: 40px; min-height: 613px; display: block;"
         class="gallery-body">
-        {#await promise then blog}
+        {#await BlogGet() then blog}
             <div class="title-wrapper">
                 <h3>{blog.title}</h3>
             </div>
@@ -114,7 +122,9 @@ import Blog from "./blog.svelte";
             </div>
         {:catch err}
             <div class="title-wrapper">
-                <h3>嗝，这个博客不是被删了就是被封了。<br />也有可能是你不配</h3>
+                <h3>
+                    嗝，这个博客不是被删了就是被封了。<br />也有可能是你不配
+                </h3>
             </div>
         {/await}
     </div>
@@ -126,22 +136,25 @@ import Blog from "./blog.svelte";
         on:mouseleave={() => {
             floatingbtn = false;
         }}>
-        {#await promise then blog}
-        {#if editType == 'edit'}
-            <a
-                class="btn-floating btn-large red"
-                use:link
-                href="/edit/{params.id}/">
-                <i class="large material-icons">mode_edit</i>
-            </a>
-        {:else if editType == 'report'}
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <a class="btn-floating btn-large red" on:click="{() => {open(reportModal,{uid: blog.user.id})}}">
-                <i class="large material-icons">report</i>
-            </a>
-        {/if}
+        {#await BlogGet() then blog}
+            {#if editType == 'edit'}
+                <a
+                    class="btn-floating btn-large red"
+                    use:link
+                    href="/edit/{params.id}/">
+                    <i class="large material-icons">mode_edit</i>
+                </a>
+            {:else if editType == 'report'}
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <a
+                    class="btn-floating btn-large red"
+                    on:click={() => {
+                        open(reportModal, { uid: blog.user.id });
+                    }}>
+                    <i class="large material-icons">report</i>
+                </a>
+            {/if}
         {/await}
-        
 
         {#if floatingbtn}
             <ul style="" in:slide out:fade>
@@ -170,6 +183,7 @@ import Blog from "./blog.svelte";
     </div>
 </div>
 <svelte:head>
+    <!-- svelte-ignore a11y-missing-attribute -->
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/vditor/dist/index.css" />
