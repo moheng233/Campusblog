@@ -8,6 +8,7 @@
     import { push, replace } from "svelte-spa-router/Router.svelte";
     import { get } from "svelte/store";
     import { Login } from "../store";
+    import { getContext } from "svelte";
 
     export let params: {
         id: number | "creater";
@@ -18,18 +19,20 @@
             let data: IBlogCreater = {
                 content: "",
                 subimage: undefined,
+                classify: undefined,
                 subtitle: "",
                 title: "",
             };
             return data;
         } else {
             let data = await ClientApi.object.BlogGet(id);
-            let newdata:IBlogCreater = {
+            let newdata: IBlogCreater = {
                 content: data.content,
-                subimage: data.subimage as unknown as number,
+                subimage: (data.subimage as unknown) as number,
+                classify: undefined,
                 subtitle: data.subtitle,
-                title: data.title
-            }
+                title: data.title,
+            };
             return newdata;
         }
     }
@@ -46,25 +49,18 @@
         content: "",
         title: "",
         subtitle: "",
+        classify: undefined,
         subimage: undefined,
     };
 
-    const onSubimage = (event: CustomEvent<HTMLInputElement>) => {
-        console.log(event);
-        if (event.detail.files.length > 0) {
-            let fr = new FileReader();
-            fr.onload = (e) => {
-                ClientApi.object.UploadImages(e.target.result as string).then((e) => {
-                    BlogData.subimage = e.id
-                })
-            };
-            fr.onerror = (e) => {};
-            let file = event.detail.files[0];
-
-            console.log(file);
-
-            fr.readAsDataURL(file);
-        }
+    const onSubimage = async (event: CustomEvent<HTMLInputElement>) => {
+        ClientApi.object
+            .UploadImages(
+                await ClientApi.object.File2Base64(event.detail.files[0])
+            )
+            .then((e) => {
+                BlogData.subimage = e.id;
+            });
     };
 
     const onCheckClick = async () => {
@@ -75,7 +71,7 @@
             });
             replace(`/blog/${blog.id}`);
         } else {
-            console.log(BlogData)
+            console.log(BlogData);
             let blog = await ClientApi.object.BlogUpdata(params.id, BlogData);
             m.toast({
                 html: "修改成功",
@@ -118,14 +114,16 @@
                             file: string;
                         } = JSON.parse(responseText);
 
-                        let filename = (new URL(rj.file).pathname.split('/').pop());
+                        let filename = new URL(rj.file).pathname
+                            .split("/")
+                            .pop();
                         let r: {
                             msg: string;
                             code: number;
                             data: {
                                 errFiles: string[];
                                 succMap: {
-                                    [keys:string]: string;
+                                    [keys: string]: string;
                                 };
                             };
                         } = {
@@ -133,11 +131,11 @@
                             code: 0,
                             data: {
                                 errFiles: [],
-                                succMap: {}
+                                succMap: {},
                             },
                         };
 
-                        r.data.succMap[filename] = rj.file
+                        r.data.succMap[filename] = rj.file;
                         return JSON.stringify(r);
                     },
                     fieldName: "file",
@@ -161,6 +159,15 @@
                 label_name="副标题"
                 type="text"
                 bind:value={BlogData.subtitle} />
+            <label>选择分类</label>
+            <select class="browser-default" bind:value={BlogData.classify}>
+                <option value="" disabled selected>选择文章分类</option>
+                {#await ClientApi.object.ClassifyList() then classifys }
+                    {#each classifys as classify}
+                        <option value={classify.id}>{ classify.title }</option>
+                    {/each}
+                {/await}
+            </select>
             <InputField
                 label_name="首页大图"
                 type="file"

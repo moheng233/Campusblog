@@ -1,8 +1,10 @@
 <script lang="typescript">
+	import m from "materialize-css";
+
 	import Router, { link } from "svelte-spa-router/Router.svelte";
 	import type { IPage } from "./main";
 
-	import Modal from "svelte-simple-modal/src/Modal.svelte";
+	import Modal from "./Components/Modal/Modal.svelte";
 
 	import login from "./Login/login.svelte";
 	import register from "./Login/register.svelte";
@@ -123,6 +125,7 @@
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <style type="scss" global>
+
 	@import "./styles/gallery.scss";
 	/* @import "./styles/materialize.scss"; */
 	/* @import "./styles/_style.scss"; */

@@ -50,6 +50,7 @@ export interface IBlogCreater {
     title: string;
     subtitle: string;
     subimage: number;
+    classify: number
     content: string;
 }
 
@@ -428,5 +429,9 @@ export class ClientApi {
             "POST",
             true
         );
+    }
+
+    async GetImagesListByUser(){
+        return await this.api<undefined,IUploadImage[]>('/uploadimage/',undefined,undefined,"GET",true)
     }
 }

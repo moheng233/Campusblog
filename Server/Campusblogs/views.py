@@ -98,3 +98,12 @@ class ReportsViewSet(viewsets.ModelViewSet):
 class UploadImagesViewSet(viewsets.ModelViewSet):
     queryset = UploadImages.objects.all()
     serializer_class = UploadImagesSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if(self.action == 'list'):
+            queryset = queryset.filter(user=self.request.user)
+
+        return queryset
+    

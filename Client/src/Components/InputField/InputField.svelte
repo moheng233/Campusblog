@@ -1,9 +1,12 @@
 <script lang="typescript">
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, getContext } from 'svelte'
+    import uploadModal from '../uploadImgModal.svelte'
+
     const dispatch = createEventDispatcher<{
         "change": HTMLInputElement
     }>();
 
+    const { open } = getContext("simple-modal");
 
     export let type: "text" | "password" | "email" | "file" = "text";
     export let label_name: string;
@@ -19,7 +22,11 @@
     {:else if type == 'password'}
         <input type="password" bind:value on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
     {:else if type == 'file'}
-        <div class="btn"><span>上传</span><input type="file" on:change="{(r) => {dispatch("change",r.currentTarget)}}" /></div>
+        <!-- <div class="btn"><span>上传</span><input type="file" on:change="{(r) => {dispatch("change",r.currentTarget)}}" /></div>
+        <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" />
+        </div> -->
+        <div class="btn" on:click="{() => {open(uploadModal)}}"><span>上传</span></div>
         <div class="file-path-wrapper">
             <input class="file-path validate" type="text" />
         </div>
