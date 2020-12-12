@@ -2,9 +2,13 @@ from django.apps.config import AppConfig
 from django.contrib import admin
 from django.db import models
 from django.db.models.query import QuerySet
+from import_export.admin import ExportActionMixin
 from martor.widgets import AdminMartorWidget
 
-from Campusblogs.models import Blogs, Posts , Reports, UploadImages, Classify
+from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
+
+from .resources import BlogsResources
+
 
 @admin.register(UploadImages)
 class UploadImagesAdmin(admin.ModelAdmin):
@@ -12,7 +16,9 @@ class UploadImagesAdmin(admin.ModelAdmin):
     list_display = ['id','user','file']
 
 @admin.register(Blogs)
-class BlogsAdmin(admin.ModelAdmin):
+class BlogsAdmin(admin.ModelAdmin,ExportActionMixin):
+    resource_class = BlogsResources
+
     search_fields = ('title',)
 
     formfield_overrides = {

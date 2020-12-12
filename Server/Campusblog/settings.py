@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'corsheaders',
+    'import_export',
     'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,7 +51,6 @@ INSTALLED_APPS = [
     'Campusblogs',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'import_export',
     'martor',
     'constance',
     'constance.backends.database'

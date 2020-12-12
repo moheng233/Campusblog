@@ -6,7 +6,7 @@
 
     let { close } = getContext('simple-modal');
 
-    let uid:number;
+    export let uid:number;
     let content: string = ""
 
     const onClickBtn = () => {
