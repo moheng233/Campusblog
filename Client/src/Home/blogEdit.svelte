@@ -53,10 +53,6 @@
         subimage: undefined,
     };
 
-    const onSubimage = async (r: IUploadImage) => {
-        BlogData.subimage = r.id;
-    };
-
     const onCheckClick = async () => {
         if (params.id == "creater") {
             let blog = await ClientApi.object.BlogCreater(BlogData);
@@ -75,67 +71,63 @@
     };
 
     function init(node: HTMLDivElement, blog: IBlogCreater) {
-        (async () => {
-            const vditor = new Vditor(node, {
-                value: blog.content,
-                minHeight: 300,
-                cache: {
-                    enable: false,
-                    id: `vditor-${params.id}`,
+        const vditor = new Vditor(node, {
+            value: blog.content,
+            minHeight: 300,
+            cache: {
+                enable: false,
+                id: `vditor-${params.id}`,
+            },
+            input: (v) => {
+                BlogData.content = v;
+            },
+            icon: "material",
+            preview: {
+                hljs: {
+                    lineNumber: true,
                 },
-                input: (v) => {
-                    BlogData.content = v;
+            },
+            upload: {
+                url: `${ClientApi.object.HTTPHeader}/uploadimage/`,
+                accept: "image/*",
+                headers: {
+                    Authorization: `Bearer ${get(Login.LoginToken)}`,
                 },
-                icon: "material",
-                preview: {
-                    hljs: {
-                        lineNumber: true,
-                    },
-                },
-                upload: {
-                    url: `${ClientApi.object.HTTPHeader}/uploadimage/`,
-                    accept: "image/*",
-                    headers: {
-                        Authorization: `Bearer ${get(Login.LoginToken)}`,
-                    },
-                    format: (Files: File[], responseText: string) => {
-                        let rj: {
+                format: (Files: File[], responseText: string) => {
+                    let rj: {
+                        id: number;
+                        user: {
                             id: number;
-                            user: {
-                                id: number;
-                                last_name: string;
-                            };
-                            file: string;
-                        } = JSON.parse(responseText);
-
-                        let filename = new URL(rj.file).pathname
-                            .split("/")
-                            .pop();
-                        let r: {
-                            msg: string;
-                            code: number;
-                            data: {
-                                errFiles: string[];
-                                succMap: {
-                                    [keys: string]: string;
-                                };
-                            };
-                        } = {
-                            msg: "上传成功",
-                            code: 0,
-                            data: {
-                                errFiles: [],
-                                succMap: {},
-                            },
+                            last_name: string;
                         };
+                        file: string;
+                    } = JSON.parse(responseText);
 
-                        r.data.succMap[filename] = rj.file;
-                        return JSON.stringify(r);
-                    },
-                    fieldName: "file",
+                    let filename = new URL(rj.file).pathname.split("/").pop();
+                    let r: {
+                        msg: string;
+                        code: number;
+                        data: {
+                            errFiles: string[];
+                            succMap: {
+                                [keys: string]: string;
+                            };
+                        };
+                    } = {
+                        msg: "上传成功",
+                        code: 0,
+                        data: {
+                            errFiles: [],
+                            succMap: {},
+                        },
+                    };
+
+                    r.data.succMap[filename] = rj.file;
+                    return JSON.stringify(r);
                 },
-            });
-        })();
+                fieldName: "file",
+            },
+        });
     }
     // $: BlogData.content = vditor?.getValue();
 </script>
@@ -165,7 +157,9 @@
             <InputField
                 label_name="首页大图"
                 type="file"
-                on:selectUploadFile={onSubimage} />
+                on:selectUploadFile={(r) => {
+                    BlogData.subimage = r.detail.id;
+                }} />
             <div use:init={blog} />
         {/await}
     </div>

@@ -10,7 +10,12 @@
 
     import Vditor from "vditor";
 
-    import moment from "moment";
+    import dayjs from "dayjs";
+    import "dayjs/locale/zh-cn";
+    import relativeTime from 'dayjs/plugin/relativeTime';
+
+    dayjs.extend(relativeTime);
+
     import InputField from "../Components/InputField/InputField.svelte";
     import Button from "../Components/Button/Button.svelte";
     import { fade, fly, slide } from "svelte/transition";
@@ -38,9 +43,7 @@
     });
 
     let preview = (node: HTMLDivElement, blog: IBlog) => {
-        Vditor.preview(node, blog.content, {
-            anchor: 0,
-        });
+        Vditor.preview(node, blog.content);
     };
 
     let PostContent: string = "";
@@ -94,7 +97,7 @@
                 <p class="author">
                     由{blog.user.last_name}发布在
                     <time
-                        datetime={moment(blog.created_at).toJSON()}>{moment(blog.created_at).fromNow()}</time>
+                        datetime={dayjs(blog.created_at).toJSON()}>{dayjs(blog.created_at).fromNow()}</time>
                 </p>
                 <h3>{blog.posts.length}条回复</h3>
                 <div id="comments">
@@ -102,7 +105,7 @@
                         <ul>
                             <li id={post.id.toString()}>
                                 <p class="author">
-                                    {post.user.last_name}回复于<time>{moment(post.created_at).fromNow()}</time>
+                                    {post.user.last_name}回复于<time>{dayjs(post.created_at).fromNow()}</time>
                                 </p>
                                 <div class="comment">
                                     <p>{post.content}</p>

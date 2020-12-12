@@ -1,8 +1,8 @@
 <script lang="ts">
-    import moment from "moment";
-    import "moment/locale/zh-cn";
+    import dayjs from 'dayjs';
+    import "dayjs/locale/zh-cn";
 
-    moment.locale("zh-cn");
+    dayjs.locale("zh-cn");
 
     import Blog from "./blog.svelte";
 
@@ -77,7 +77,7 @@
             <Blog
                 id={blog.id}
                 post_user={blog.user.last_name}
-                created_at={moment(blog.created_at).fromNow()}
+                created_at={dayjs(blog.created_at).fromNow()}
                 title={blog.title}
                 subtitle={blog.subtitle}
                 subimage={blog.subimage.file} />

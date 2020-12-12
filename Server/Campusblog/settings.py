@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from typing import OrderedDict
+from os import path
 
 # from constance import config
 
@@ -52,8 +53,7 @@ INSTALLED_APPS = [
     'import_export',
     'martor',
     'constance',
-    'constance.backends.database',
-    'django_seed'
+    'constance.backends.database'
 ]
 
 MIDDLEWARE = [
@@ -72,7 +72,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'templates'
+            path.join(BASE_DIR,'templates')
         ],
         'APP_DIRS': True,
         'OPTIONS': {

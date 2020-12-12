@@ -50,7 +50,7 @@
         </div> -->
         <div class="btn" on:click="{uploadClick}"><span>上传</span></div>
         <div class="file-path-wrapper">
-            <input class="file-path validate" bind:value="{($UploadImg).file}" type="text" />
+            <input class="file-path validate" value="{($UploadImg)?.file ?? ""}" type="text" />
         </div>
     {/if}
     {#if (label_name && type != "file")}<label for={label_name}>{label_name}</label>{/if}
