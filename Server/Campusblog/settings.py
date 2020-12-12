@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'Campusblogs',
     'rest_framework',
     'rest_framework.authtoken',
-    'import_export',
+    # 'import_export',
     'martor',
     'constance',
     'constance.backends.database'
