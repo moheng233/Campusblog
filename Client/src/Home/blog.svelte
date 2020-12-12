@@ -3,6 +3,12 @@
 
     import {fade} from 'svelte/transition'
 
+    import dayjs from "dayjs";
+    import "dayjs/locale/zh-cn";
+    import relativeTime from 'dayjs/plugin/relativeTime';
+
+    dayjs.extend(relativeTime);
+
     export let id: number;
 
     export let title: string = "标题";
@@ -26,7 +32,7 @@
                 <h2 style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{title}</h2>
                 <p class="blog-author">
                     由{post_user}发布在
-                    <time datetime="">{created_at}</time>
+                    <time datetime="">{dayjs(created_at).fromNow()}</time>
                 </p>
                 <div class="rte" style="max-width: 400px;word-break:break-all;">
                     <meta charset="utf-8" /><span>{subtitle}</span>

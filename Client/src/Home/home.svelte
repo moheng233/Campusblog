@@ -77,7 +77,7 @@
             <Blog
                 id={blog.id}
                 post_user={blog.user.last_name}
-                created_at={dayjs(blog.created_at).fromNow()}
+                created_at={blog.created_at}
                 title={blog.title}
                 subtitle={blog.subtitle}
                 subimage={blog.subimage.file} />
