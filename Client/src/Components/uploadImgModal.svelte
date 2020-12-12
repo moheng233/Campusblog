@@ -1,8 +1,10 @@
 <script lang="ts">
     import { Tabs } from "materialize-css";
     import { ClientApi } from "../tool/api";
+    import { UploadImg } from '../store';
 
     import Button from "./Button/Button.svelte";
+import { getContext } from "svelte";
 
     const init = (node: HTMLUListElement) => {
         Tabs.init(node);
@@ -11,6 +13,8 @@
     let select = 0;
 
     let uploadfile: string;
+
+    let { close } = getContext('simple-modal');
 
     const onUploadChange = async (r: Event & {currentTarget: EventTarget & HTMLInputElement}) => {
         let files = r.currentTarget.files;
@@ -22,7 +26,8 @@
     const upload = () => {
         // ClientApi.object.UploadImages(ClientApi.object.File2Base64(uploadfile.))
         console.log(uploadfile)
-        ClientApi.object.UploadImages(uploadfile)
+        ClientApi.object.UploadImages(uploadfile);
+        select = 1;
     }
 </script>
 
@@ -72,13 +77,13 @@
 {#if select == 1}
     <div class="card-content masonry">
         {#await ClientApi.object.GetImagesListByUser() then ImagesList}
-            {#each ImagesList as Images}
+            {#each ImagesList as Image}
                 <div class="card" style="">
                     <div class="card-image">
-                        <img class="" src="{Images.file}" />
+                        <img class="" src="{Image.file}" />
                     </div>
                     <div class="card-action">
-                        <a>选择</a>
+                        <a on:click="{(event) => {UploadImg.set(Image);close();}}">选择</a>
                         <a>删除</a>
                     </div>
                 </div>

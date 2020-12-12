@@ -1,7 +1,7 @@
 <script lang="ts">
     import Vditor from "vditor";
     import { ClientApi } from "../tool/api";
-    import type { IBlog, IBlogCreater } from "../tool/api";
+    import type { IBlog, IBlogCreater, IUploadImage } from "../tool/api";
     import m from "materialize-css";
 
     import InputField from "../Components/InputField/InputField.svelte";
@@ -53,14 +53,8 @@
         subimage: undefined,
     };
 
-    const onSubimage = async (event: CustomEvent<HTMLInputElement>) => {
-        ClientApi.object
-            .UploadImages(
-                await ClientApi.object.File2Base64(event.detail.files[0])
-            )
-            .then((e) => {
-                BlogData.subimage = e.id;
-            });
+    const onSubimage = async (r: IUploadImage) => {
+        BlogData.subimage = r.id;
     };
 
     const onCheckClick = async () => {
@@ -162,16 +156,16 @@
             <label>选择分类</label>
             <select class="browser-default" bind:value={BlogData.classify}>
                 <option value="" disabled selected>选择文章分类</option>
-                {#await ClientApi.object.ClassifyList() then classifys }
+                {#await ClientApi.object.ClassifyList() then classifys}
                     {#each classifys as classify}
-                        <option value={classify.id}>{ classify.title }</option>
+                        <option value={classify.id}>{classify.title}</option>
                     {/each}
                 {/await}
             </select>
             <InputField
                 label_name="首页大图"
                 type="file"
-                on:change={onSubimage} />
+                on:selectUploadFile={onSubimage} />
             <div use:init={blog} />
         {/await}
     </div>

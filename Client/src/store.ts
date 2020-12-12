@@ -2,11 +2,12 @@
     import { writable as localwritable } from "svelte-persistent-store/dist/local";
     import {
         derived,
+        writable,
         get,
         Readable,
     } from "svelte/store";
     import { ClientApi } from "./tool/api";
-    import type { IUser } from "./tool/api";
+    import type { IUser,IUploadImage } from "./tool/api";
 
     export const Login = {
         LoginToken: localwritable<string>("LoginToken", ""),
@@ -62,3 +63,5 @@
             }
         });
     };
+
+    export const UploadImg = writable<IUploadImage | undefined>(undefined);
