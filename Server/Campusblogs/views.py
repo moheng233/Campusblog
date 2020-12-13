@@ -84,7 +84,7 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         self.sensitive_testing(serializer)
-        return super().perform_create(self,serializer=serializer)
+        return super().perform_create(serializer)
 
     def perform_update(self, serializer):
         self.sensitive_testing(serializer)
