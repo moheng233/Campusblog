@@ -4,7 +4,7 @@
     import { UploadImg } from '../store';
 
     import Button from "./Button/Button.svelte";
-import { getContext } from "svelte";
+    import { getContext } from "svelte";
 
     const init = (node: HTMLUListElement) => {
         Tabs.init(node);
@@ -31,6 +31,7 @@ import { getContext } from "svelte";
     }
 </script>
 
+
 <style>
     .masonry {
         display: grid;
@@ -47,6 +48,7 @@ import { getContext } from "svelte";
 <div class="card-tabs">
     <ul class="tabs tabs-fixed-width" use:init>
         <li class="tab">
+            <!-- svelte-ignore a11y-missing-attribute -->
             <a
                 class:active={select == 0}
                 on:click={() => {
@@ -54,6 +56,7 @@ import { getContext } from "svelte";
                 }}>上传图片</a>
         </li>
         <li class="tab">
+            <!-- svelte-ignore a11y-missing-attribute -->
             <a
                 class:active={select == 1}
                 on:click={() => {

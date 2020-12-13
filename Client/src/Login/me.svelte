@@ -1,6 +1,11 @@
 <script lang="ts">
     import Card from "../Components/Card/Card.svelte";
+    import { openUploadImgModal } from "../Components/InputField/InputField.svelte";
     import * as store from "../store";
+
+    const ChangeAvatar = async () => {
+
+    }
 </script>
 
 <style>
@@ -24,6 +29,7 @@
                     <div class="col s4" style="">
                         <!-- svelte-ignore a11y-missing-attribute -->
                         <img
+                            on:click="{ChangeAvatar}"
                             src={user.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'}
                             class="circle"
                             style="height: 60px;width: 60px;margin-right: 10px;" />

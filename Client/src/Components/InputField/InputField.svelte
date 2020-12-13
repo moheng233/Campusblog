@@ -1,14 +1,5 @@
-<script lang="typescript">
-    import { createEventDispatcher, getContext } from 'svelte';
+<script lang="typescript" context="module">
     import uploadModal from '../uploadImgModal.svelte';
-    import { UploadImg } from '../../store';
-    import type { IUploadImage } from '../../tool/api';
-
-    const dispatch = createEventDispatcher<{
-        "change": HTMLInputElement,
-        "selectUploadFile": IUploadImage
-    }>();
-
     const { open } = getContext("simple-modal");
 
     export const openUploadImgModal = () => {
@@ -23,6 +14,17 @@
             })
         })
     }
+</script>
+<script lang="typescript">
+    import { createEventDispatcher, getContext } from 'svelte';
+    
+    import { UploadImg } from '../../store';
+    import type { IUploadImage } from '../../tool/api';
+
+    const dispatch = createEventDispatcher<{
+        "change": HTMLInputElement,
+        "selectUploadFile": IUploadImage
+    }>();
 
     async function uploadClick(){
         openUploadImgModal().then((r) => {
