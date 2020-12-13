@@ -8,6 +8,8 @@ from rest_framework import mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import filters
+from constance import config
+from rest_framework.exceptions import APIException
 
 from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
 from Campusblogs.serializers import (BlogsListSerializer, BlogsSerializer, ClassifyListSerializer, ClassifySerializer,
@@ -68,6 +70,27 @@ class BlogViewSet(viewsets.ModelViewSet):
             return super().get_permissions()
         pass
 
+    def sensitive_testing(self,serializer):
+        Sensitive:str = getattr(config,"sensitive_words");
+        SensitiveList = Sensitive.split(",");
+        for s in iter(SensitiveList):
+            if s in serializer.initial_data['title']:
+                raise APIException(detail="标题包含敏感词'" + s + "'");
+            pass
+            if s in serializer.initial_data['content']:
+                raise APIException(detail="正文包含敏感词'" + s + "'");
+            pass
+
+
+    def perform_create(self, serializer):
+        self.sensitive_testing(serializer)
+        return super().perform_create(self,serializer=serializer)
+
+    def perform_update(self, serializer):
+        self.sensitive_testing(serializer)
+        return super().perform_update(serializer)
+
+
 
 class ClassifyViewSet(mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
@@ -84,6 +107,13 @@ class ClassifyViewSet(mixins.ListModelMixin,
             else:
                 return super().get_serializer_class()
         pass
+
+        def get_permissions(self):
+            if(self.action == "list"):
+                return []
+            else:
+                return super().get_permissions()
+            pass
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Posts.objects.all()

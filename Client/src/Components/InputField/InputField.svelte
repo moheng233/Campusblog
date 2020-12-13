@@ -1,9 +1,20 @@
-<script lang="typescript" context="module">
+<script lang="typescript">
     import uploadModal from '../uploadImgModal.svelte';
+    import { createEventDispatcher, getContext } from 'svelte';
+    
+    import { UploadImg } from '../../store';
+    import type { IUploadImage } from '../../tool/api';
+
     const { open } = getContext("simple-modal");
+
+    const dispatch = createEventDispatcher<{
+        "change": HTMLInputElement,
+        "selectUploadFile": IUploadImage
+    }>();
 
     export const openUploadImgModal = () => {
         return new Promise<IUploadImage>((res,rej) => {
+            
             UploadImg.set(undefined);
             open(uploadModal);
             
@@ -14,17 +25,6 @@
             })
         })
     }
-</script>
-<script lang="typescript">
-    import { createEventDispatcher, getContext } from 'svelte';
-    
-    import { UploadImg } from '../../store';
-    import type { IUploadImage } from '../../tool/api';
-
-    const dispatch = createEventDispatcher<{
-        "change": HTMLInputElement,
-        "selectUploadFile": IUploadImage
-    }>();
 
     async function uploadClick(){
         openUploadImgModal().then((r) => {
@@ -37,7 +37,6 @@
     export let value: string = "";
 
 </script>
-
 <div class="input-field" class:file-field={type == "file"}>
     {#if type == 'text'}
         <input type="text" bind:value on:change="{(r) => {dispatch("change",r.currentTarget)}}" />

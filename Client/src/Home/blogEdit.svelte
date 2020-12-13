@@ -1,7 +1,7 @@
 <script lang="ts">
     import Vditor from "vditor";
     import { ClientApi } from "../tool/api";
-    import type { IBlog, IBlogCreater, IUploadImage } from "../tool/api";
+    import type { IBlog, IBlogCreater, IUploadImage,IErr } from "../tool/api";
     import m from "materialize-css";
 
     import InputField from "../Components/InputField/InputField.svelte";
@@ -55,18 +55,29 @@
 
     const onCheckClick = async () => {
         if (params.id == "creater") {
-            let blog = await ClientApi.object.BlogCreater(BlogData);
-            m.toast({
-                html: "发布成功",
+            ClientApi.object.BlogCreater(BlogData).then(r => {
+                m.toast({
+                    html: "发布成功",
+                });
+                replace(`/blog/${r.id}`);
+            }).catch((r:IErr) => {
+                m.toast({
+                    html: r.detail
+                })
             });
-            replace(`/blog/${blog.id}`);
         } else {
             console.log(BlogData);
-            let blog = await ClientApi.object.BlogUpdata(params.id, BlogData);
-            m.toast({
-                html: "修改成功",
+            ClientApi.object.BlogUpdata(params.id, BlogData).then(r => {
+                m.toast({
+                    html: "修改成功",
+                });
+                replace(`/blog/${r.id}/`);
+            }).catch((r:IErr) => {
+                m.toast({
+                    html: r.detail
+                })
             });
-            replace(`/blog/${blog.id}/`);
+            
         }
     };
 

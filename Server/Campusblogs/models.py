@@ -51,7 +51,7 @@ class Blogs(models.Model):
 
     def __str__(self) -> str:
         return str(self.title)
-
+        
     class Meta:
         verbose_name = '文章'
         verbose_name_plural = verbose_name

@@ -1,10 +1,36 @@
 <script lang="ts">
     import Card from "../Components/Card/Card.svelte";
-    import { openUploadImgModal } from "../Components/InputField/InputField.svelte";
     import * as store from "../store";
+    import uploadModal from '../Components/uploadImgModal.svelte';
+    import { ClientApi } from "../tool/api";
+    import type { IUploadImage } from "../tool/api";
+    import { getContext } from "svelte";
+    import { replace,location } from "svelte-spa-router/Router.svelte";
+
+    const { open } = getContext("simple-modal");
+
+    export const openUploadImgModal = () => {
+        return new Promise<IUploadImage>((res,rej) => {
+            
+            store.UploadImg.set(undefined);
+            open(uploadModal);
+            
+            let sub = store.UploadImg.subscribe((value) => {
+                if(value != undefined){
+                    res(value);
+                    sub();
+                }
+            })
+        })
+    }
 
     const ChangeAvatar = async () => {
-
+        openUploadImgModal().then(r => {
+            ClientApi.object.UserSetAvatar(r.id).finally(() => {
+                replace($location);
+            })
+            
+        })
     }
 </script>
 

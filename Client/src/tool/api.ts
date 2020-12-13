@@ -7,7 +7,7 @@ import { Login, LoginSwitch } from "../store";
 
 type HTTPmethod = "GET" | "POST" | "PUT" | "DELETE";
 
-interface IErr {
+export interface IErr {
     code: string;
     detail: string;
 };
@@ -97,7 +97,9 @@ export class ClientApi {
 
     async decode(data: Response, type: "json" | "msgpack" = "json") {
         if (type == "json") {
-            return await data.json();
+            return await data.json().catch(err => {
+                return {};
+            });
         } else if (type == "msgpack") {
             return msgpack.decode(await data.arrayBuffer());
         }
@@ -312,10 +314,18 @@ export class ClientApi {
         return await this.api<{}, IUser>(`/auth/users/${id ?? "me"}/`);
     }
 
+    async UserSetAvatar(avatarid: number){
+        return await this.api<{
+            avatar: number
+        },{}>(`/auth/users/set_avatar/`,undefined,{
+            avatar: avatarid
+        },"POST",true);
+    }
+
     async UsersUpdata(
         data: { last_name: string; email: string; avatar: number },
         id?: number
-    ) { }
+    ) {}
 
     async ClassifyList() {
         let r = await this.api<
