@@ -340,14 +340,14 @@ export class ClientApi {
      * 获得Blog列表
      * @param page 页
      */
-    async BlogList(page?: number, order: "updated_at" | "-updated_at" = "updated_at", classify?: number) {
+    async BlogList(page?: number, order: "updated_at" | "-updated_at" = "updated_at", classify?: number,search?: string) {
         let r = await this.api<
             {},
             {
                 count: number;
                 results: IBlog[];
             }
-        >(`/blogs/`, { page: `${page}`, classify: classify, ordering: order }, undefined, "GET", false);
+        >(`/blogs/`, { page: `${page}`, classify: classify, ordering: order, search: search }, undefined, "GET", false);
 
         return r;
     }

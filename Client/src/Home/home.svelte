@@ -72,7 +72,7 @@
     style="margin-top: 20px"
     in:fly={{ delay: 300, x: -500 }}
     out:fly={{ x: -500 }}>
-    {#await ClientApi.object.BlogList(Number(query.get('page') ?? 1), ClientApi.object.emptygGet(query.get('search')), ClientApi.object.emptygGet(query.get('classify'))) then blogs}
+    {#await ClientApi.object.BlogList(Number(query.get('page') ?? 1), emptygGet(query.get('search')), emptygGet(query.get('classify')),emptygGet(query.get('search'))) then blogs}
         {#each blogs.results as blog}
             <Blog
                 id={blog.id}
