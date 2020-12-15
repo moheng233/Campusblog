@@ -28,6 +28,6 @@ class UserViewSet(djoserUserViewSet):
         setattr(user, 'avatar', new_avatar)
         user.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT,data={})
 
     pass

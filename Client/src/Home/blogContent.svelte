@@ -1,7 +1,7 @@
 <script lang="ts">
-    import m from "materialize-css";
+    import m, { toast } from "materialize-css";
 
-    import { User as UserStore } from "../store";
+    import { User as UserStore , Fabulous} from "../store";
 
     import { ClientApi } from "../tool/api";
     import type { IBlog, IUser } from "../tool/api";
@@ -19,9 +19,8 @@
     import InputField from "../Components/InputField/InputField.svelte";
     import Button from "../Components/Button/Button.svelte";
     import { fade, fly, slide } from "svelte/transition";
+    import { get } from "svelte/store";
     import { link, replace,location } from "svelte-spa-router/Router.svelte";
-
-    import { memoize } from "lodash";
 
     import reportModal from "./reportModal.svelte";
 
@@ -30,8 +29,7 @@
     let floatingbtn: boolean = false;
     let editType: "edit" | "report" = "edit";
 
-    let BlogGet = memoize(async () => {
-        return ClientApi.object.BlogGet(params.id).then((r) => {
+    let BlogGet = ClientApi.object.BlogGet(params.id).then((r) => {
             let user = $UserStore;
             if (user.id == r.user.id) {
                 editType = "edit";
@@ -40,7 +38,6 @@
             }
             return r;
         });
-    });
 
     let preview = (node: HTMLDivElement, blog: IBlog) => {
         Vditor.preview(node, blog.content);
@@ -52,14 +49,13 @@
 
     async function PostCreate() {
         ClientApi.object
-            .BlogPost((await BlogGet()).id, PostContent)
+            .BlogPost((await BlogGet).id, PostContent)
             .then((r) => {
                 m.toast({
                     html: "回复成功",
                 });
-                // promise = ClientApi.object.BlogGet(params.id);
-                BlogGet.cache = new memoize.Cache;
-                replace($location);
+                BlogGet = ClientApi.object.BlogGet(params.id)
+                // replace($location);
                 PostContent = "";
             });
     }
@@ -88,24 +84,25 @@
     <div
         style="margin-top: 184px; padding: 40px; min-height: 613px; display: block;"
         class="gallery-body">
-        {#await BlogGet() then blog}
+        {#await BlogGet then blog}
             <div class="title-wrapper">
                 <h3>{blog.title}</h3>
             </div>
             <div class="">
                 <article class="" use:preview={blog} />
                 <p class="author">
-                    由{blog.user.last_name}发布在
+                    由{blog.user.username}发布在
                     <time
                         datetime={dayjs(blog.created_at).toJSON()}>{dayjs(blog.created_at).fromNow()}</time>
                 </p>
-                <h3>{blog.posts.length}条回复</h3>
+                <h5>{blog.fabulous}个👍</h5>
+                <h5>{blog.posts.length}条回复</h5>
                 <div id="comments">
                     {#each blog.posts as post}
                         <ul>
                             <li id={post.id.toString()}>
                                 <p class="author">
-                                    {post.user.last_name}回复于<time>{dayjs(post.created_at).fromNow()}</time>
+                                    {post.user.username}回复于<time>{dayjs(post.created_at).fromNow()}</time>
                                 </p>
                                 <div class="comment">
                                     <p>{post.content}</p>
@@ -139,7 +136,7 @@
         on:mouseleave={() => {
             floatingbtn = false;
         }}>
-        {#await BlogGet() then blog}
+        {#await BlogGet then blog}
             {#if editType == 'edit'}
                 <a
                     class="btn-floating btn-large red"
@@ -169,7 +166,18 @@
                 <li>
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <a class="btn-floating yellow darken-1"><i
-                            class="material-icons">format_quote</i></a>
+                            class="" on:click={async () => {
+                                let blog = await BlogGet;
+                                if((get(Fabulous)[blog.id] ?? false) == false){
+                                    await ClientApi.object.BlogAddFabulous(blog.id);
+                                    BlogGet = ClientApi.object.BlogGet(params.id)
+                                } else {
+                                    toast({
+                                        html: "你已经点过👍了"
+                                    })
+                                }
+                                
+                            }}>👍</i></a>
                 </li>
                 <li>
                     <!-- svelte-ignore a11y-missing-attribute -->

@@ -6,7 +6,7 @@
     import { get } from "svelte/store";
     import { fade, slide } from "svelte/transition";
     import type { IPage } from "./main";
-    import * as store from "./store";
+    import {LoginSwitch,getUser} from "./store";
     import { ClientApi } from "./tool/api";
 
     import SearchModal from './Components/searchBlogsModal.svelte';
@@ -39,7 +39,7 @@
                             class="site-nav__link"
                             >搜索</a>
                     </li>
-                    {#if get(store.LoginSwitch) == true}
+                    {#if $LoginSwitch == true}
                         <li
                             on:mouseenter={() => {
                                 UserDown = true;
@@ -47,14 +47,14 @@
                             on:mouseleave={() => {
                                 UserDown = false;
                             }}>
-                            {#await store.getUser() then User}
+                            {#await getUser() then User}
                                 <a
                                     use:link
                                     href="/auth/me"
                                     class="user-account dropdown-button"><img
                                         class="circle"
                                         style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
-                                        src={User.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'} />{User.last_name}</a>
+                                        src={User.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'} />{User.username}</a>
                                 {#if UserDown}
                                     <ul
                                         in:slide

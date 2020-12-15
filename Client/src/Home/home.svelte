@@ -76,7 +76,7 @@
         {#each blogs.results as blog}
             <Blog
                 id={blog.id}
-                post_user={blog.user.last_name}
+                post_user={blog.user.username}
                 created_at={blog.created_at}
                 title={blog.title}
                 subtitle={blog.subtitle}

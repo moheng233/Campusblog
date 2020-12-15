@@ -12,7 +12,7 @@ from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
 class BlogsUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'last_name')
+        fields = ('id','username' ,'last_name')
 
 
 class UploadImagesSerializer(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class BlogsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blogs
         fields = ('id', 'title', 'user', 'classify', 'subtitle',
-                  'subimage', 'created_at', 'updated_at')
+                  'subimage','fabulous' ,'created_at', 'updated_at')
 
 
 class BlogsSerializer(serializers.ModelSerializer):
@@ -72,6 +72,7 @@ class BlogsSerializer(serializers.ModelSerializer):
     user = BlogsUserSerializer(read_only=True)
     # subimage = UploadImagesSerializer()
     posts = PostSerializer(many=True, read_only=True)
+    fabulous = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -82,7 +83,10 @@ class BlogsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blogs
         fields = ('id', 'title', 'user', 'classify', 'content', 'subtitle',
-                  'subimage', 'created_at', 'updated_at', 'posts')
+                  'subimage','fabulous', 'created_at', 'updated_at', 'posts')
+
+class AddFabulousSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
 
 
 class ClassifySerializer(serializers.ModelSerializer):

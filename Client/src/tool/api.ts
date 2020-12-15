@@ -3,7 +3,7 @@ import * as msgpack from "@msgpack/msgpack";
 import m from 'materialize-css';
 
 import { get } from "svelte/store";
-import { Login, LoginSwitch } from "../store";
+import { Login, LoginSwitch, Fabulous } from "../store";
 
 type HTTPmethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -36,12 +36,14 @@ export interface IBlog {
     title: string;
     user: {
         id: number;
+        username: string;
         last_name: string;
     };
     posts: IPost[];
     subtitle: string;
     content: string;
     subimage: IUploadImage;
+    fabulous: number;
     created_at: string;
     updated_at: string;
 }
@@ -59,6 +61,7 @@ export interface IPost {
     informants: number;
     user: {
         id: number;
+        username: string;
         last_name: string;
     };
     content: string;
@@ -124,8 +127,8 @@ export class ClientApi {
         });
     }
 
-    emptygGet<T>(target: any){
-        if(target == undefined || target == null){
+    emptygGet<T>(target: any) {
+        if (target == undefined || target == null) {
             return undefined;
         } else {
             return target as T;
@@ -314,18 +317,23 @@ export class ClientApi {
         return await this.api<{}, IUser>(`/auth/users/${id ?? "me"}/`);
     }
 
-    async UserSetAvatar(avatarid: number){
+    async UserSetAvatar(avatarid: number) {
         return await this.api<{
             avatar: number
-        },{}>(`/auth/users/set_avatar/`,undefined,{
+        }, {}>(`/auth/users/set_avatar/`, undefined, {
             avatar: avatarid
-        },"POST",true);
+        }, "POST", true);
     }
 
-    async UsersUpdata(
-        data: { last_name: string; email: string; avatar: number },
-        id?: number
-    ) {}
+    async UserSetUsername(username: string, password: string){
+        return await this.api<{
+            current_password: string,
+            new_username: string
+        },"">("/auth/users/set_username/",undefined,{
+            current_password: password,
+            new_username: username
+        },"POST",true);
+    }
 
     async ClassifyList() {
         let r = await this.api<
@@ -340,7 +348,7 @@ export class ClientApi {
      * 获得Blog列表
      * @param page 页
      */
-    async BlogList(page?: number, order: "updated_at" | "-updated_at" = "updated_at", classify?: number,search?: string) {
+    async BlogList(page?: number, order: "updated_at" | "-updated_at" = "updated_at", classify?: number, search?: string) {
         let r = await this.api<
             {},
             {
@@ -414,14 +422,23 @@ export class ClientApi {
         );
     }
 
-    async BlogReport(data: { informants: number; reason: string }) {
-        return await this.api<
+    BlogReport(data: { informants: number; reason: string }) {
+        return this.api<
             {
                 informants: number;
                 reason: string;
             },
             IReport
         >("/reports/", undefined, data, "POST", true);
+    }
+
+    async BlogAddFabulous(bid: number) {
+        const r = await this.api<{}, {}>(`/blogs/${bid}/add_fabulous/`, undefined, undefined, "GET", true);
+        Fabulous.update((value) => {
+            value[bid] = true;
+            return value;
+        })
+        return r;
     }
 
     async UploadImages(file: string) {
@@ -441,7 +458,7 @@ export class ClientApi {
         );
     }
 
-    async GetImagesListByUser(){
-        return await this.api<undefined,IUploadImage[]>('/uploadimage/',undefined,undefined,"GET",true)
+    async GetImagesListByUser() {
+        return await this.api<undefined, IUploadImage[]>('/uploadimage/', undefined, undefined, "GET", true)
     }
 }

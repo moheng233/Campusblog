@@ -11,7 +11,6 @@
 <div class="card-content">
     <h4>搜索</h4>
     <InputField bind:value={search}></InputField>
-    
 </div>
 <div class="card-action">
     <a href="#/search?search={search}" on:click="{() => {close()}}">搜索</a>

@@ -7,6 +7,8 @@
     import { getContext } from "svelte";
     import { replace,location } from "svelte-spa-router/Router.svelte";
 
+    import changeUserModal from "../Components/changeUsernameModal.svelte";
+
     const { open } = getContext("simple-modal");
 
     export const openUploadImgModal = () => {
@@ -63,8 +65,8 @@
                 </div>
                 <div class="divider" />
                 <div class="list">
-                    <div class="col s4">昵称</div>
-                    <div class="col s4">{user.last_name}</div>
+                    <div class="col s4">用户名</div>
+                    <div class="col s4">{user.username}</div>
                 </div>
                 <div class="divider" />
                 <div class="list">
@@ -82,6 +84,6 @@
         <a
             class="btn-floating btn-large red"
             on:click={() => {
-                
+                open(changeUserModal)
             }}><i class="large material-icons">mode_edit</i></a>
 </div>
