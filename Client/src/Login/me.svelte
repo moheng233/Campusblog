@@ -1,3 +1,7 @@
+<!--
+    @component
+    我的界面
+-->
 <script lang="ts">
     import Card from "../Components/Card/Card.svelte";
     import * as store from "../store";

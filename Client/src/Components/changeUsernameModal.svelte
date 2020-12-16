@@ -1,3 +1,7 @@
+<!--
+    @component
+    修改用户名弹窗
+-->
 <script lang="ts">
     import { toast, Toast } from "materialize-css";
 

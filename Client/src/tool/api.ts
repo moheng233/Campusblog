@@ -126,7 +126,7 @@ export class ClientApi {
             fr.readAsDataURL(file);
         });
     }
-
+    
     emptygGet<T>(target: any) {
         if (target == undefined || target == null || target == "") {
             return undefined;
@@ -135,6 +135,10 @@ export class ClientApi {
         }
     }
 
+    /**
+     * 去除对象的杂质
+     * @param obj 一个对象
+     */
     removeEmpty(obj: { [keys: string]: any }) {
         Object.keys(obj).forEach((key) => (obj[key] == null || obj[key] == undefined) && delete obj[key]);
         return obj;
@@ -327,6 +331,10 @@ export class ClientApi {
         },{}>(`/auth/users/set_password/`,undefined,info,"POST",true)
     }
 
+    /**
+     * 修改用户的信息
+     * @param info 用户信息
+     */
     async UserSetInfo(info:{
         last_name: string,
         email: string
@@ -337,6 +345,10 @@ export class ClientApi {
         },IUser>(`/auth/users/me/`,undefined,info,"PUT",true);
     }
 
+    /**
+     * 设置用户头像
+     * @param avatarid 头像对应的UploadID
+     */
     async UserSetAvatar(avatarid: number) {
         return await this.api<{
             avatar: number
@@ -345,6 +357,11 @@ export class ClientApi {
         }, "POST", true);
     }
 
+    /**
+     * 设置用户用户名
+     * @param username 用户名
+     * @param password 验证密码
+     */
     async UserSetUsername(username: string, password: string) {
         return await this.api<{
             current_password: string,
@@ -355,6 +372,9 @@ export class ClientApi {
         }, "POST", true);
     }
 
+    /**
+     * 向后端请求分类列表
+     */
     async ClassifyList() {
         let r = await this.api<
             {},
@@ -400,14 +420,26 @@ export class ClientApi {
     //     }
     // }
 
+    /**
+     * 向后端请求某个博客的详细
+     * @param id 博客ID
+     */
     async BlogGet(id: number) {
         return await this.api<{}, IBlog>(`/blogs/${id}/`).catch();
     }
 
+    /**
+     * 向后端请求删除某个博客
+     * @param id 博客ID
+     */
     async BlogDelete(id: number) {
         return await this.api<{}, {}>(`/blogs/${id}/`, undefined, undefined, "DELETE", true);
     }
-
+    
+    /**
+     * 向后端请求新建博客
+     * @param data 数据
+     */
     async BlogCreater(data: IBlogCreater) {
         return await this.api<IBlogCreater, IBlog>(
             "/blogs/",
@@ -418,6 +450,11 @@ export class ClientApi {
         );
     }
 
+    /**
+     * 向后端请求修改博客
+     * @param bid 博客ID
+     * @param data 博客数据
+     */
     async BlogUpdata(bid: number, data: IBlogCreater) {
         return await this.api<IBlogCreater, IBlog>(
             `/blogs/${bid}/`,
@@ -428,6 +465,11 @@ export class ClientApi {
         );
     }
 
+    /**
+     * 向后端请求给某个文章添加回复
+     * @param bid 博客ID
+     * @param content 回复内容
+     */
     async BlogPost(bid: number, content: string) {
         return await this.api<
             {
@@ -446,6 +488,11 @@ export class ClientApi {
         );
     }
 
+
+    /**
+     * 向后端请求举报某个帖子
+     * @param data 举报
+     */
     BlogReport(data: { informants: number; reason: string }) {
         return this.api<
             {
@@ -456,6 +503,10 @@ export class ClientApi {
         >("/reports/", undefined, data, "POST", true);
     }
 
+    /**
+     * 向某个帖子点赞
+     * @param bid 博客ID
+     */
     async BlogAddFabulous(bid: number) {
         const r = await this.api<{}, {}>(`/blogs/${bid}/add_fabulous/`, undefined, undefined, "GET", true);
         Fabulous.update((value) => {
@@ -465,6 +516,10 @@ export class ClientApi {
         return r;
     }
 
+    /**
+     * 向服务端请求上传某个文件
+     * @param file 文件
+     */
     async UploadImages(file: string) {
         return await this.api<
             {
@@ -482,6 +537,9 @@ export class ClientApi {
         );
     }
 
+    /**
+     * 获得当前用户上传的所以文件
+     */
     async GetImagesListByUser() {
         return await this.api<undefined, IUploadImage[]>('/uploadimage/', undefined, undefined, "GET", true)
     }

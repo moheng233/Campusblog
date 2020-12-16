@@ -26,6 +26,9 @@ from Campusblogs.serializers import (
 
 
 class BlogPagePagination(PageNumberPagination):
+    '''
+    为了与前端API对接专门写的分页器
+    '''
     page_size = 20
 
     def get_paginated_response(self, data):
@@ -38,6 +41,9 @@ class BlogPagePagination(PageNumberPagination):
 
 
 class BlogViewSet(viewsets.ModelViewSet):
+    '''
+    负责博客的视图集
+    '''
     queryset = Blogs.objects.filter(activation=True,user__is_active=True).all()
     serializer_class = BlogsListSerializer
 
@@ -79,6 +85,9 @@ class BlogViewSet(viewsets.ModelViewSet):
         pass
 
     def sensitive_testing(self, serializer):
+        '''
+        敏感词检查
+        '''
         Sensitive: str = getattr(config, "sensitive_words")
         SensitiveList = Sensitive.split(",")
         for s in iter(SensitiveList):
@@ -91,6 +100,9 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     @action(["GET"], detail=True, url_name="Add Fabulous", url_path="add_fabulous")
     def add_fabulous(self, request: Request, *args, **kwargs):
+        '''
+        点赞
+        '''
         blog = self.get_object()
         blog.fabulous = F('fabulous') + 1
         blog.save()
@@ -109,6 +121,9 @@ class BlogViewSet(viewsets.ModelViewSet):
 class ClassifyViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
+    '''
+    分类视图集
+    '''
     queryset = Classify.objects.all()
     serializer_class = ClassifyListSerializer
 
@@ -131,16 +146,25 @@ class ClassifyViewSet(
 
 
 class PostViewSet(viewsets.ModelViewSet):
+    '''
+    回复视图集
+    '''
     queryset = Posts.objects.all()
     serializer_class = PostSerializer
 
 
 class ReportsViewSet(viewsets.ModelViewSet):
+    '''
+    举报视图集
+    '''
     queryset = Reports.objects.all()
     serializer_class = ReportsSerializer
 
 
 class UploadImagesViewSet(viewsets.ModelViewSet):
+    '''
+    上传文件视图集
+    '''
     queryset = UploadImages.objects.all()
     serializer_class = UploadImagesSerializer
 

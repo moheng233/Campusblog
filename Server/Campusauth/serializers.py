@@ -10,6 +10,10 @@ from django.contrib.auth.models import User, models
 User = get_user_model()
 
 class UserSerializer(UserSerializer):
+    '''
+    适应扩展用户的序列化器
+    '''
+
     avatar = UploadImagesSerializer(read_only=True)
 
     class Meta:

@@ -1,3 +1,7 @@
+<!--
+    @component
+    注册界面
+-->
 <script lang="ts">
     import M from 'materialize-css'
 

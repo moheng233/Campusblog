@@ -1,3 +1,7 @@
+<!--
+    @component
+    展示博客缩略图的组件
+-->
 <script lang="ts">
     import { link } from 'svelte-spa-router/Router.svelte';
 

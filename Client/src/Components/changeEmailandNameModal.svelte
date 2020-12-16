@@ -1,3 +1,7 @@
+<!--
+    @component
+    修改电子邮箱的弹窗
+-->
 <script lang="ts">
     import { toast } from "materialize-css";
 

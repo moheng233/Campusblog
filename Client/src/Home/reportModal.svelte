@@ -1,3 +1,7 @@
+<!--
+    @component
+    举报弹窗
+-->
 <script lang="ts">
     import { getContext } from 'svelte';
     import m from 'materialize-css';

@@ -30,6 +30,9 @@ router.register('reports', views.ReportsViewSet)
 
 admin.site.site_header = getattr(config,'site_name')
 
+'''
+负责主要路由
+'''
 urlpatterns = [
     path('',include(router.urls)),
     path('admin/', admin.site.urls),

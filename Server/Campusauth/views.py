@@ -13,6 +13,9 @@ User = get_user_model()
 
 
 class UserViewSet(djoserUserViewSet):
+    '''
+    用户的主要视图集
+    '''
     def get_serializer_class(self):
         if self.action == "set_avatar":
             return SetUserAvatarSerializer

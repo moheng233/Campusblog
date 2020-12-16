@@ -10,12 +10,18 @@ from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
 
 
 class BlogsUserSerializer(serializers.ModelSerializer):
+    '''
+    用来在博客中序列化用户字段的序列化器
+    '''
     class Meta:
         model = get_user_model()
         fields = ('id','username' ,'last_name')
 
 
 class UploadImagesSerializer(serializers.ModelSerializer):
+    '''
+    上传文件的序列化器
+    '''
     id = serializers.IntegerField(read_only=True)
     user = BlogsUserSerializer(read_only=True)
     file = Base64ImageField()
@@ -33,6 +39,9 @@ class UploadImagesSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    '''
+    回复的序列化器
+    '''
     id = serializers.IntegerField(read_only=True)
     user = BlogsUserSerializer(read_only=True)
 
@@ -48,6 +57,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class ClassifyListSerializer(serializers.ModelSerializer):
+    '''
+    分类的序列化器
+    '''
     id = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -56,6 +68,10 @@ class ClassifyListSerializer(serializers.ModelSerializer):
 
 
 class BlogsListSerializer(serializers.ModelSerializer):
+    '''
+    博客列表的序列化器
+    '''
+
     id = serializers.IntegerField(read_only=True)
     subimage = UploadImagesSerializer()
     user = BlogsUserSerializer(required=False)
@@ -68,6 +84,9 @@ class BlogsListSerializer(serializers.ModelSerializer):
 
 
 class BlogsSerializer(serializers.ModelSerializer):
+    '''
+    详细博客的序列化器
+    '''
     id = serializers.IntegerField(read_only=True)
     user = BlogsUserSerializer(read_only=True)
     # subimage = UploadImagesSerializer()
@@ -86,6 +105,8 @@ class BlogsSerializer(serializers.ModelSerializer):
                   'subimage','fabulous', 'created_at', 'updated_at', 'posts')
 
 class AddFabulousSerializer(serializers.Serializer):
+
+    
     id = serializers.IntegerField()
 
 

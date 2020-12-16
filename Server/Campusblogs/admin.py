@@ -17,6 +17,10 @@ class UploadImagesAdmin(admin.ModelAdmin):
 
 @admin.register(Blogs)
 class BlogsAdmin(ExportActionMixin,admin.ModelAdmin):
+    '''
+    博客后台注册
+    '''
+
     resource_class = BlogsResources
     search_fields = ('title',)
 

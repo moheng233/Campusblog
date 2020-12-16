@@ -1,3 +1,7 @@
+<!--
+    @component
+    首页
+-->
 <script lang="ts">
     import dayjs from 'dayjs';
     import "dayjs/locale/zh-cn";

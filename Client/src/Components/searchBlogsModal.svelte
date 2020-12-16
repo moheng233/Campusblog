@@ -1,3 +1,7 @@
+<!--
+    @component
+    搜索弹窗
+-->
 <script lang="ts">
     import { getContext } from 'svelte';
 

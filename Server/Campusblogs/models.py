@@ -7,6 +7,9 @@ from django.db.models.fields.related import ForeignKey
 # Create your models here.
 
 class UploadImages(models.Model):
+    '''
+    上传图片的模型
+    '''
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,verbose_name="作者",related_name="uploadimage")
     # blog = ForeignKey(Blogs, on_delete=models.CASCADE, verbose_name="博客", related_name="uploadimage")
     file = models.ImageField('图片',upload_to='static/upload')
@@ -21,6 +24,9 @@ class UploadImages(models.Model):
     pass
 
 class Classify(models.Model):
+    '''
+    分类的模型
+    '''
     title = CharField('分类名称',max_length=100);
 
     def __str__(self) -> str:
@@ -33,6 +39,9 @@ class Classify(models.Model):
     pass
 
 class Blogs(models.Model):
+    '''
+    博客的模型
+    '''
     title = CharField('标题',max_length=100)
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,verbose_name="作者",related_name="blogs")
     subtitle = CharField('二级标题',max_length=200,default='')
@@ -59,6 +68,9 @@ class Blogs(models.Model):
     pass
 
 class Posts(models.Model):
+    '''
+    回复的模型
+    '''
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="回复者", related_name="posts")
     blog = ForeignKey(Blogs, on_delete=models.CASCADE, verbose_name="博客", related_name="posts")
 
@@ -72,6 +84,9 @@ class Posts(models.Model):
         verbose_name_plural = verbose_name
 
 class Reports(models.Model):
+    '''
+    举报的模型
+    '''
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="举报人", related_name="informant");
     informants = ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE, verbose_name="被举报人", related_name="informants")
 

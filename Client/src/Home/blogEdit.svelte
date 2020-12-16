@@ -1,3 +1,7 @@
+<!--
+    @component
+    博客编辑界面
+-->
 <script lang="ts">
     import Vditor from "vditor";
     import { ClientApi } from "../tool/api";

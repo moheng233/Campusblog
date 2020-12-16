@@ -1,3 +1,7 @@
+<!--
+    @component
+    博客详细界面
+-->
 <script lang="ts">
     import m, { toast } from "materialize-css";
 

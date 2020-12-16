@@ -1,3 +1,7 @@
+<!--
+    @component
+    修改密码弹窗
+-->
 <script lang="ts">
     import { toast, Toast } from "materialize-css";
 

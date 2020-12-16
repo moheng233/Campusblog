@@ -1,3 +1,7 @@
+<!--
+    @component
+    上传图片的弹窗
+-->
 <script lang="ts">
     import { Tabs } from "materialize-css";
     import { ClientApi } from "../tool/api";

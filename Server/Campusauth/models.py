@@ -6,6 +6,9 @@ from django.dispatch import receiver
 
 
 class User(AbstractUser):
+    '''
+    从Django自带的AbstractUser模型扩展的用户模型
+    '''
 
     avatar = models.ForeignKey(UploadImages,on_delete=models.CASCADE,verbose_name="头像",related_name="avatar",null=True)
 
