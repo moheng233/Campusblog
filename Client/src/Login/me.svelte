@@ -1,39 +1,39 @@
 <script lang="ts">
     import Card from "../Components/Card/Card.svelte";
     import * as store from "../store";
-    import uploadModal from '../Components/uploadImgModal.svelte';
+    import uploadModal from "../Components/uploadImgModal.svelte";
     import { ClientApi } from "../tool/api";
     import type { IUploadImage } from "../tool/api";
     import { getContext } from "svelte";
-    import { replace,location } from "svelte-spa-router/Router.svelte";
+    import { replace, location } from "svelte-spa-router/Router.svelte";
 
     import changeUserModal from "../Components/changeUsernameModal.svelte";
+    import changeUserInfoModal from "../Components/changeEmailandNameModal.svelte";
+    import changeUserpasswordModal from "../Components/changePasswordModal.svelte";
 
     const { open } = getContext("simple-modal");
 
     export const openUploadImgModal = () => {
-        return new Promise<IUploadImage>((res,rej) => {
-            
+        return new Promise<IUploadImage>((res, rej) => {
             store.UploadImg.set(undefined);
             open(uploadModal);
-            
+
             let sub = store.UploadImg.subscribe((value) => {
-                if(value != undefined){
+                if (value != undefined) {
                     res(value);
                     sub();
                 }
-            })
-        })
-    }
+            });
+        });
+    };
 
     const ChangeAvatar = async () => {
-        openUploadImgModal().then(r => {
+        openUploadImgModal().then((r) => {
             ClientApi.object.UserSetAvatar(r.id).finally(() => {
                 replace($location);
-            })
-            
-        })
-    }
+            });
+        });
+    };
 </script>
 
 <style>
@@ -47,7 +47,7 @@
     }
 </style>
 
-{#await store.getUser() then user}
+{#await ClientApi.object.UsersGet() then user}
     <div class="section container">
         <div class="row">
             <Card>
@@ -57,19 +57,36 @@
                     <div class="col s4" style="">
                         <!-- svelte-ignore a11y-missing-attribute -->
                         <img
-                            on:click="{ChangeAvatar}"
+                            on:click={ChangeAvatar}
                             src={user.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'}
                             class="circle"
                             style="height: 60px;width: 60px;margin-right: 10px;" />
                     </div>
                 </div>
                 <div class="divider" />
-                <div class="list">
+                <div
+                    class="list"
+                    on:click={() => {
+                        open(changeUserModal);
+                    }}>
                     <div class="col s4">用户名</div>
                     <div class="col s4">{user.username}</div>
                 </div>
                 <div class="divider" />
-                <div class="list">
+                <div
+                    class="list"
+                    on:click={() => {
+                        open(changeUserInfoModal);
+                    }}>
+                    <div class="col s4">昵称</div>
+                    <div class="col s4">{user.last_name}</div>
+                </div>
+                <div class="divider" />
+                <div
+                    class="list"
+                    on:click={() => {
+                        open(changeUserInfoModal);
+                    }}>
                     <div class="col s4">电子邮件</div>
                     <div class="col s4">{user.email}</div>
                 </div>
@@ -81,9 +98,9 @@
 
 <div class="fixed-action-btn">
     <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-            class="btn-floating btn-large red"
-            on:click={() => {
-                open(changeUserModal)
-            }}><i class="large material-icons">mode_edit</i></a>
+    <a
+        class="btn-floating btn-large red"
+        on:click={() => {
+            open(changeUserpasswordModal);
+        }}><i class="large material-icons">mode_edit</i></a>
 </div>

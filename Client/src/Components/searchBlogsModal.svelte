@@ -13,5 +13,5 @@
     <InputField bind:value={search}></InputField>
 </div>
 <div class="card-action">
-    <a href="#/search?search={search}" on:click="{() => {close()}}">搜索</a>
+    <a href="#/search?search={search}&hide=true" on:click="{() => {close()}}">搜索</a>
 </div>

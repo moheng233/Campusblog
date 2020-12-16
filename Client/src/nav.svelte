@@ -54,7 +54,7 @@
                                     class="user-account dropdown-button"><img
                                         class="circle"
                                         style="height: 32px;width: 32px;vertical-align: middle;margin-right: 10px;"
-                                        src={User.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'} />{User.username}</a>
+                                        src={User.avatar?.file ?? 'https://img.zcool.cn/community/01a3865ab91314a8012062e3c38ff6.png@2o.png'} />{ClientApi.object.emptygGet(User.last_name) ?? User.username}</a>
                                 {#if UserDown}
                                     <ul
                                         in:slide
@@ -63,6 +63,9 @@
                                         style="white-space: nowrap;position: absolute;opacity: 1;display: block;margin-left: 20px;">
                                         <li>
                                             <a href="#/auth/me">用户</a>
+                                        </li>
+                                        <li>
+                                            <a href="{`#/search?search=${User.username}&hide=true`}">我的博客</a>
                                         </li>
                                         <li>
                                             <a

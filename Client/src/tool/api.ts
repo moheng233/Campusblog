@@ -128,7 +128,7 @@ export class ClientApi {
     }
 
     emptygGet<T>(target: any) {
-        if (target == undefined || target == null) {
+        if (target == undefined || target == null || target == "") {
             return undefined;
         } else {
             return target as T;
@@ -317,6 +317,26 @@ export class ClientApi {
         return await this.api<{}, IUser>(`/auth/users/${id ?? "me"}/`);
     }
 
+    async UserSetPassword(info:{
+        new_password: string,
+        current_password: string
+    }){
+        return await this.api<{
+            new_password: string,
+            current_password: string
+        },{}>(`/auth/users/set_password/`,undefined,info,"POST",true)
+    }
+
+    async UserSetInfo(info:{
+        last_name: string,
+        email: string
+    }){
+        return await this.api<{
+                last_name: string,
+                email: string
+        },IUser>(`/auth/users/me/`,undefined,info,"PUT",true);
+    }
+
     async UserSetAvatar(avatarid: number) {
         return await this.api<{
             avatar: number
@@ -325,14 +345,14 @@ export class ClientApi {
         }, "POST", true);
     }
 
-    async UserSetUsername(username: string, password: string){
+    async UserSetUsername(username: string, password: string) {
         return await this.api<{
             current_password: string,
             new_username: string
-        },"">("/auth/users/set_username/",undefined,{
+        }, "">("/auth/users/set_username/", undefined, {
             current_password: password,
             new_username: username
-        },"POST",true);
+        }, "POST", true);
     }
 
     async ClassifyList() {
@@ -348,7 +368,7 @@ export class ClientApi {
      * 获得Blog列表
      * @param page 页
      */
-    async BlogList(page?: number, order: "updated_at" | "-updated_at" = "updated_at", classify?: number, search?: string) {
+    async BlogList(page?: number, order: "updated_at" | "-updated_at" | "-fabulous" = "-fabulous", classify?: number, search?: string) {
         let r = await this.api<
             {},
             {
@@ -382,6 +402,10 @@ export class ClientApi {
 
     async BlogGet(id: number) {
         return await this.api<{}, IBlog>(`/blogs/${id}/`).catch();
+    }
+
+    async BlogDelete(id: number) {
+        return await this.api<{}, {}>(`/blogs/${id}/`, undefined, undefined, "DELETE", true);
     }
 
     async BlogCreater(data: IBlogCreater) {

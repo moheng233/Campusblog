@@ -16,10 +16,13 @@
 
     $: query = new URLSearchParams($querystring);
 
+    $: console.log(emptygGet(query.get('hide')));
+
     function getQuery(
         option: {
             classify?: number;
             page?: number;
+            hide?: boolean;
         } = {}
     ) {
         let q = new URLSearchParams(query.toString());
@@ -42,6 +45,7 @@
     let emptygGet = memoize(ClientApi.object.emptygGet);
 </script>
 
+{#if emptygGet(query.get('hide')) == undefined}
 <nav class="filter-navbar" style="">
     <div class="categories-wrapper" style="height: 48px; ">
         <div class="categories-container pin-top" style="top: 0px;">
@@ -68,15 +72,16 @@
         </div>
     </div>
 </nav>
+{/if}
 <div
-    style="margin-top: 20px"
+    style="margin-top: 80px"
     in:fly={{ delay: 300, x: -500 }}
     out:fly={{ x: -500 }}>
     {#await ClientApi.object.BlogList(Number(query.get('page') ?? 1), emptygGet(query.get('search')), emptygGet(query.get('classify')),emptygGet(query.get('search'))) then blogs}
         {#each blogs.results as blog}
             <Blog
                 id={blog.id}
-                post_user={blog.user.username}
+                post_user={emptygGet(blog.user.last_name) ?? blog.user.username}
                 created_at={blog.created_at}
                 title={blog.title}
                 subtitle={blog.subtitle}

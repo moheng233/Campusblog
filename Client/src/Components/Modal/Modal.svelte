@@ -75,7 +75,7 @@
           onClosed?: () => {}
       };
 
-    const open = (
+    export const open = (
       NewComponent: SvelteComponentDev,
       newProps = {},
       options = {},
@@ -90,7 +90,7 @@
       onClosed = callback.onClosed || toVoid;
     };
   
-    const close = (callback:openCallback = {}) => {
+    export const close = (callback:openCallback = {}) => {
       onClose = callback.onClose || onClose;
       onClosed = callback.onClosed || onClosed;
       Component = null;

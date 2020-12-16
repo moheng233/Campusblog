@@ -91,7 +91,7 @@
             <div class="">
                 <article class="" use:preview={blog} />
                 <p class="author">
-                    由{blog.user.username}发布在
+                    由{ClientApi.object.emptygGet(blog.user.last_name) ?? blog.user.username}发布在
                     <time
                         datetime={dayjs(blog.created_at).toJSON()}>{dayjs(blog.created_at).fromNow()}</time>
                 </p>
@@ -157,6 +157,28 @@
         {/await}
 
         {#if floatingbtn}
+            {#if editType == 'edit'}
+                <ul style="" in:slide out:fade>
+                    <li>
+                        <!-- svelte-ignore a11y-missing-attribute -->
+                        <a class="btn-floating red" on:click={async () => {
+                            let blog = await BlogGet;
+
+                            let r = window.confirm("确认要删除这篇博客吗？\n！此操作不可反悔！")
+                            if(r == true){
+                                ClientApi.object.BlogDelete(blog.id).then(() => {
+                                    toast({
+                                        html: "删除成功"
+                                    })
+                                    replace("/");
+                                });
+                            }
+                            
+                        }}><i
+                                class="material-icons">delete</i></a>
+                    </li>
+                </ul>
+            {:else}
             <ul style="" in:slide out:fade>
                 <li>
                     <!-- svelte-ignore a11y-missing-attribute -->
@@ -190,6 +212,7 @@
                             class="material-icons">attach_file</i></a>
                 </li>
             </ul>
+            {/if}
         {/if}
     </div>
 </div>

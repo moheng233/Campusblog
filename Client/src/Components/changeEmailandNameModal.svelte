@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { toast, Toast } from "materialize-css";
+    import { toast } from "materialize-css";
 
     import { getContext } from "svelte";
-    import { replace } from "svelte-spa-router/Router.svelte";
 
     import { getUser } from "../store";
     import { ClientApi } from "../tool/api";
@@ -12,18 +11,23 @@
     let { close } = getContext("simple-modal");
 
     let userPromise = getUser().then((r) => {
-        username = r.username;
+        last_name = r.last_name;
+        email = r.email;
         return r;
     });
 
-    let username = "";
-    // let email = "";
-    let password = "";
+    let last_name = "";
+    let email = "";
 
     const updata = () => {
-            ClientApi.object.UserSetUsername(username,password).then(r => {
-                replace("/auth/me");
-                close();  
+            ClientApi.object.UserSetInfo({
+                last_name,
+                email
+            }).then(r => {
+                toast({
+                    html: "修改成功"
+                })
+                close();
             }).catch((errs: {
                 [key: string]: string[]
             }) => {
@@ -41,8 +45,8 @@
 <div class="card-content">
     <h4>修改信息</h4>
     {#await userPromise then user}
-        <InputField bind:value={username} action label_name="用户名"/>
-        <InputField bind:value={password} action type="password" label_name="确认密码"/>
+        <InputField bind:value={last_name} label_name="昵称"/>
+        <InputField bind:value={email} label_name="电子邮箱"/>
     {/await}
 </div>
 <div class="card-action">

@@ -34,16 +34,17 @@
 
     export let type: "text" | "password" | "email" | "file" = "text";
     export let label_name: string;
+    export let action: boolean;
     export let value: string = "";
 
 </script>
 <div class="input-field" class:file-field={type == "file"}>
     {#if type == 'text'}
-        <input type="text" bind:value on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
+        <input type="text" bind:value class:action={action} on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
     {:else if type == 'email'}
-        <input type="email" bind:value on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
+        <input type="email" bind:value class:action={action} on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
     {:else if type == 'password'}
-        <input type="password" bind:value on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
+        <input type="password" bind:value class:action={action} on:change="{(r) => {dispatch("change",r.currentTarget)}}" />
     {:else if type == 'file'}
         <!-- <div class="btn"><span>上传</span><input type="file" on:change="{(r) => {dispatch("change",r.currentTarget)}}" /></div>
         <div class="file-path-wrapper">

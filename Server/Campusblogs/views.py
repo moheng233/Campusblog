@@ -45,8 +45,8 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
 
-    search_fields = ("title",)
-    ordering_fields = ("created_at", "updated_at")
+    search_fields = ("title","=user__username")
+    ordering_fields = ("fabulous","created_at", "updated_at")
     classify_fields = "classify"
 
     def get_queryset(self):
