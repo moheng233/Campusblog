@@ -38,7 +38,7 @@ class BlogPagePagination(PageNumberPagination):
 
 
 class BlogViewSet(viewsets.ModelViewSet):
-    queryset = Blogs.objects.filter(activation=True).all()
+    queryset = Blogs.objects.filter(activation=True,user__is_active=True).all()
     serializer_class = BlogsListSerializer
 
     pagination_class = BlogPagePagination

@@ -38,7 +38,7 @@
                 .catch((err: {detail: string}) => {
                     if(err.detail == "No active account found with the given credentials"){
                         M.toast({
-                            html: "密码错误",
+                            html: "密码错误\n或者你的账户已被封禁",
                         });
                     }
                 });
@@ -72,9 +72,6 @@
                 <Button size="large" style="width: 100%" on:click={LoginClick}>
                     登陆
                 </Button>
-                <a
-                    href="#/auth/recover"
-                    class="RecoverPassword">什么？！你忘记了你的密码？</a>
                 <a
                     href="#/auth/register"
                     class="RecoverPassword">不会吧！不会吧！<br />竟然还有人没有注册我们的账号？！</a>
