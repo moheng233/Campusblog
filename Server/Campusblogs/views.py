@@ -38,8 +38,6 @@ class BlogPagePagination(PageNumberPagination):
 
 
 # Create your views here.
-
-
 class BlogViewSet(viewsets.ModelViewSet):
     '''
     负责博客的视图集
