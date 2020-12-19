@@ -35,9 +35,9 @@ class BlogsAdmin(ExportActionMixin,admin.ModelAdmin):
 
     list_display = ['title','user','classify','activation']
 
-# @admin.register(Posts)
-# class PostsAdmin(admin.ModelAdmin):
-#     list_display = ['blog','user']
+@admin.register(Posts)
+class PostsAdmin(admin.ModelAdmin):
+    list_display = ['blog','user']
 
 @admin.register(Reports)
 class ReportsAdmin(admin.ModelAdmin):
