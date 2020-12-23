@@ -52,7 +52,8 @@
     const { open } = getContext("simple-modal");
 
     async function PostCreate() {
-        ClientApi.object.BlogPost((await BlogGet).id, PostContent).then((r) => {
+        if($LoginSwitch){
+            ClientApi.object.BlogPost((await BlogGet).id, PostContent).then((r) => {
             m.toast({
                 html: "回复成功",
             });
@@ -60,6 +61,13 @@
             // replace($location);
             PostContent = "";
         });
+        } else {
+            toast({
+                html: "没有登陆的用户无法评论"
+            })
+        }
+
+        
     }
 </script>
 
@@ -113,7 +121,6 @@
                         </ul>
                     {/each}
                 </div>
-                {#if $LoginSwitch}
                     <div id="">
                         <h3>发表评论</h3>
                         <InputField
@@ -122,7 +129,6 @@
                             bind:value={PostContent} />
                         <Button size="large" on:click={PostCreate}>发布</Button>
                     </div>
-                {/if}
             </div>
         {:catch err}
             <div class="title-wrapper">
