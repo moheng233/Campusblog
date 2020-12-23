@@ -5,7 +5,7 @@
 <script lang="ts">
     import m, { toast } from "materialize-css";
 
-    import { User as UserStore , Fabulous} from "../store";
+    import { User as UserStore, Fabulous, LoginSwitch } from "../store";
 
     import { ClientApi } from "../tool/api";
     import type { IBlog, IUser } from "../tool/api";
@@ -16,7 +16,7 @@
 
     import dayjs from "dayjs";
     import "dayjs/locale/zh-cn";
-    import relativeTime from 'dayjs/plugin/relativeTime';
+    import relativeTime from "dayjs/plugin/relativeTime";
 
     dayjs.extend(relativeTime);
 
@@ -24,7 +24,7 @@
     import Button from "../Components/Button/Button.svelte";
     import { fade, fly, slide } from "svelte/transition";
     import { get } from "svelte/store";
-    import { link, replace,location } from "svelte-spa-router/Router.svelte";
+    import { link, replace, location } from "svelte-spa-router/Router.svelte";
 
     import reportModal from "./reportModal.svelte";
 
@@ -34,14 +34,14 @@
     let editType: "edit" | "report" = "edit";
 
     let BlogGet = ClientApi.object.BlogGet(params.id).then((r) => {
-            let user = $UserStore;
-            if (user.id == r.user.id) {
-                editType = "edit";
-            } else {
-                editType = "report";
-            }
-            return r;
-        });
+        let user = $UserStore;
+        if (user.id == r.user.id) {
+            editType = "edit";
+        } else {
+            editType = "report";
+        }
+        return r;
+    });
 
     let preview = (node: HTMLDivElement, blog: IBlog) => {
         Vditor.preview(node, blog.content);
@@ -52,16 +52,14 @@
     const { open } = getContext("simple-modal");
 
     async function PostCreate() {
-        ClientApi.object
-            .BlogPost((await BlogGet).id, PostContent)
-            .then((r) => {
-                m.toast({
-                    html: "回复成功",
-                });
-                BlogGet = ClientApi.object.BlogGet(params.id)
-                // replace($location);
-                PostContent = "";
+        ClientApi.object.BlogPost((await BlogGet).id, PostContent).then((r) => {
+            m.toast({
+                html: "回复成功",
             });
+            BlogGet = ClientApi.object.BlogGet(params.id);
+            // replace($location);
+            PostContent = "";
+        });
     }
 </script>
 
@@ -115,14 +113,16 @@
                         </ul>
                     {/each}
                 </div>
-                <div id="">
-                    <h3>发表评论</h3>
-                    <InputField
-                        type="text"
-                        label_name="你要bb啥？？？"
-                        bind:value={PostContent} />
-                    <Button size="large" on:click={PostCreate}>发布</Button>
-                </div>
+                {#if $LoginSwitch}
+                    <div id="">
+                        <h3>发表评论</h3>
+                        <InputField
+                            type="text"
+                            label_name="你要bb啥？？？"
+                            bind:value={PostContent} />
+                        <Button size="large" on:click={PostCreate}>发布</Button>
+                    </div>
+                {/if}
             </div>
         {:catch err}
             <div class="title-wrapper">
@@ -165,57 +165,57 @@
                 <ul style="" in:slide out:fade>
                     <li>
                         <!-- svelte-ignore a11y-missing-attribute -->
-                        <a class="btn-floating red" on:click={async () => {
-                            let blog = await BlogGet;
+                        <a
+                            class="btn-floating red"
+                            on:click={async () => {
+                                let blog = await BlogGet;
 
-                            let r = window.confirm("确认要删除这篇博客吗？\n！此操作不可反悔！")
-                            if(r == true){
-                                ClientApi.object.BlogDelete(blog.id).then(() => {
-                                    toast({
-                                        html: "删除成功"
-                                    })
-                                    replace("/");
-                                });
-                            }
-                            
-                        }}><i
-                                class="material-icons">delete</i></a>
+                                let r = window.confirm('确认要删除这篇博客吗？\n！此操作不可反悔！');
+                                if (r == true) {
+                                    ClientApi.object
+                                        .BlogDelete(blog.id)
+                                        .then(() => {
+                                            toast({
+                                                html: '删除成功',
+                                            });
+                                            replace('/');
+                                        });
+                                }
+                            }}><i class="material-icons">delete</i></a>
                     </li>
                 </ul>
             {:else}
-            <ul style="" in:slide out:fade>
-                <li>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <a class="btn-floating red"><i
-                            class="material-icons">insert_chart</i></a>
-                </li>
-                <li>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <a class="btn-floating yellow darken-1"><i
-                            class="" on:click={async () => {
-                                let blog = await BlogGet;
-                                if((get(Fabulous)[blog.id] ?? false) == false){
-                                    await ClientApi.object.BlogAddFabulous(blog.id);
-                                    BlogGet = ClientApi.object.BlogGet(params.id)
-                                } else {
-                                    toast({
-                                        html: "你已经点过👍了"
-                                    })
-                                }
-                                
-                            }}>👍</i></a>
-                </li>
-                <li>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <a class="btn-floating green"><i
-                            class="material-icons">publish</i></a>
-                </li>
-                <li>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <a class="btn-floating blue"><i
-                            class="material-icons">attach_file</i></a>
-                </li>
-            </ul>
+                <ul style="" in:slide out:fade>
+                    <li>
+                        <!-- svelte-ignore a11y-missing-attribute -->
+                        <a class="btn-floating red"><i
+                                class="material-icons">insert_chart</i></a>
+                    </li>
+                    <li>
+                        <!-- svelte-ignore a11y-missing-attribute -->
+                        <a class="btn-floating yellow darken-1"><i
+                                class=""
+                                on:click={async () => {
+                                    let blog = await BlogGet;
+                                    if ((get(Fabulous)[blog.id] ?? false) == false) {
+                                        await ClientApi.object.BlogAddFabulous(blog.id);
+                                        BlogGet = ClientApi.object.BlogGet(params.id);
+                                    } else {
+                                        toast({ html: '你已经点过👍了' });
+                                    }
+                                }}>👍</i></a>
+                    </li>
+                    <li>
+                        <!-- svelte-ignore a11y-missing-attribute -->
+                        <a class="btn-floating green"><i
+                                class="material-icons">publish</i></a>
+                    </li>
+                    <li>
+                        <!-- svelte-ignore a11y-missing-attribute -->
+                        <a class="btn-floating blue"><i
+                                class="material-icons">attach_file</i></a>
+                    </li>
+                </ul>
             {/if}
         {/if}
     </div>
