@@ -192,7 +192,7 @@
                             }}><i class="material-icons">delete</i></a>
                     </li>
                 </ul>
-            {:else}
+            {:else if editType == "report"}
                 <ul style="" in:slide out:fade>
                     <li>
                         <!-- svelte-ignore a11y-missing-attribute -->
