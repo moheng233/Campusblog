@@ -33,9 +33,9 @@
     let floatingbtn: boolean = false;
     let editType: "edit" | "report" = "edit";
 
-    let BlogGet = ClientApi.object.BlogGet(params.id).then((r) => {
+    let BlogGet = ClientApi.object.BlogGet(Number(params.id)).then((r) => {
         let user = $UserStore;
-        if (user.id == r.user.id) {
+        if (user?.id == r.user.id) {
             editType = "edit";
         } else {
             editType = "report";
