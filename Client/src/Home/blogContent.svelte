@@ -31,14 +31,16 @@
     export let params: { id: number };
 
     let floatingbtn: boolean = false;
-    let editType: "edit" | "report" = "edit";
+    let editType: "edit" | "report" | "noLogin" = "noLogin";
 
     let BlogGet = ClientApi.object.BlogGet(Number(params.id)).then((r) => {
         let user = $UserStore;
         if (user?.id == r.user.id) {
             editType = "edit";
-        } else {
+        } else if(user?.id != r.user.id) {
             editType = "report";
+        } else {
+            editType = "noLogin"
         }
         return r;
     });
