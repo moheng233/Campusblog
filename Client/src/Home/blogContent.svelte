@@ -216,7 +216,8 @@
                                         await ClientApi.object.BlogAddFabulous(blog.id);
                                         BlogGet = ClientApi.object.BlogGet(params.id);
                                     } else {
-                                        toast({ html: '你已经点过👍了' });
+                                        await ClientApi.object.BlogRemoveFabulous(blog.id);
+                                        BlogGet = ClientApi.object.BlogGet(params.id);
                                     }
                                 }}>👍</i></a>
                     </li>

@@ -558,6 +558,21 @@ export class ClientApi {
     return r;
   }
 
+  async BlogRemoveFabulous(bid: number) {
+    const r = await this.api<{}, {}>(
+      `/blogs/${bid}/add_fabulous/`,
+      undefined,
+      undefined,
+      "GET",
+      true
+    );
+    Fabulous.update((value) => {
+      value[bid] = false;
+      return value;
+    });
+    return r;
+  }
+
   /**
    * 向服务端请求上传某个文件
    * @param file 文件

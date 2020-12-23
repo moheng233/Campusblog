@@ -110,6 +110,17 @@ class BlogViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT, data={})
 
+    @action(["GET"], detail=True, url_name="remove Fabulous", url_path="remove_fabulous")
+    def remove_fabulous(self, request: Request, *args, **kwargs):
+        """
+        点赞
+        """
+        blog = self.get_object()
+        blog.fabulous = F("fabulous") - 1
+        blog.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT, data={})
+
     def perform_create(self, serializer):
         self.sensitive_testing(serializer)
         return super().perform_create(serializer)
