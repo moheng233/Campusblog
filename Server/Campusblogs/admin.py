@@ -5,7 +5,7 @@ from django.db.models.query import QuerySet
 from import_export.admin import ExportActionMixin, ExportActionModelAdmin
 from martor.widgets import AdminMartorWidget
 
-from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
+from Campusblogs.models import Blogs, Classify, Notices, Posts, Reports, UploadImages
 
 from .resources import BlogsResources
 
@@ -56,4 +56,14 @@ class ReportsAdmin(admin.ModelAdmin):
 
 @admin.register(Classify)
 class ClassifyAdmin(admin.ModelAdmin):
+    pass;
+
+@admin.register(Notices)
+class NoticesAdmin(admin.ModelAdmin):
+    list_display = ("content",)
+    exclude = ("readed",)
+
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
     pass;

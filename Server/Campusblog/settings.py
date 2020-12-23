@@ -283,7 +283,16 @@ SIMPLEUI_CONFIG = {
         },
         {
             "name": "系统设置",
-            "url": "/admin/constance/config/"
+            "models": [
+                {
+                    "name": "网站设置",
+                    "url": "/admin/constance/config/"
+                },
+                {
+                    "name": "公告管理",
+                    "url": "/admin/Campusblogs/notices",
+                }
+            ]
         }
     ],
 }

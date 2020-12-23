@@ -3,7 +3,7 @@
     首页
 -->
 <script lang="ts">
-    import dayjs from 'dayjs';
+    import dayjs from "dayjs";
     import "dayjs/locale/zh-cn";
 
     dayjs.locale("zh-cn");
@@ -15,12 +15,16 @@
     import { link, querystring } from "svelte-spa-router";
     import { LoginSwitch } from "../store";
     import { memoize, range } from "lodash";
+    import { getContext, onMount } from "svelte";
+    import NoticeModal from "../Components/noticeModal.svelte";
 
     export let ClassifyFilter: boolean = false;
 
+    const { open } = getContext("simple-modal");
+
     $: query = new URLSearchParams($querystring);
 
-    $: console.log(emptygGet(query.get('hide')));
+    $: console.log(emptygGet(query.get("hide")));
 
     function getQuery(
         option: {
@@ -42,6 +46,19 @@
         return q.toString();
     }
 
+    onMount(() => {
+        if ($LoginSwitch) {
+            ClientApi.object.GetNotices().then((e) => {
+                e.forEach((e) => {
+                    open(NoticeModal, {
+                        nid: e.id,
+                        content: e.content,
+                    });
+                });
+            });
+        }
+    });
+
     function getCPage() {
         return Number(new URLSearchParams($querystring).get("page") ?? 1);
     }
@@ -50,38 +67,38 @@
 </script>
 
 {#if emptygGet(query.get('hide')) == undefined}
-<nav class="filter-navbar" style="">
-    <div class="categories-wrapper" style="height: 48px; ">
-        <div class="categories-container pin-top" style="top: 0px;">
-            <ul class="categories container" data-filter="type">
-                <li class="">
-                    <a
-                        href="/"
-                        use:link
-                        class:active={ClientApi.object.emptygGet(query.get('classify')) == undefined}>所有</a>
-                </li>
-                {#await ClientApi.object.ClassifyList() then classifys}
-                    {#each classifys as classify}
-                        <li class="">
-                            <a
-                                href="/?{getQuery({
-                                    classify: classify.id,
-                                    page: 1,
-                                })}"
-                                use:link>{classify.title}</a>
-                        </li>
-                    {/each}
-                {/await}
-            </ul>
+    <nav class="filter-navbar" style="">
+        <div class="categories-wrapper" style="height: 48px; ">
+            <div class="categories-container pin-top" style="top: 0px;">
+                <ul class="categories container" data-filter="type">
+                    <li class="">
+                        <a
+                            href="/"
+                            use:link
+                            class:active={ClientApi.object.emptygGet(query.get('classify')) == undefined}>所有</a>
+                    </li>
+                    {#await ClientApi.object.ClassifyList() then classifys}
+                        {#each classifys as classify}
+                            <li class="">
+                                <a
+                                    href="/?{getQuery({
+                                        classify: classify.id,
+                                        page: 1,
+                                    })}"
+                                    use:link>{classify.title}</a>
+                            </li>
+                        {/each}
+                    {/await}
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 {/if}
 <div
     style="margin-top: 80px"
     in:fly={{ delay: 300, x: -500 }}
     out:fly={{ x: -500 }}>
-    {#await ClientApi.object.BlogList(Number(query.get('page') ?? 1), emptygGet(query.get('search')), emptygGet(query.get('classify')),emptygGet(query.get('search'))) then blogs}
+    {#await ClientApi.object.BlogList(Number(query.get('page') ?? 1), emptygGet(query.get('search')), emptygGet(query.get('classify')), emptygGet(query.get('search'))) then blogs}
         {#each blogs.results as blog}
             <Blog
                 id={blog.id}

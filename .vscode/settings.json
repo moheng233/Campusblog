@@ -1,0 +1,11 @@
+{
+    "npm.enableRunFromFolder": true,
+    "npm.packageManager": "yarn",
+    "javascript.format.semicolons": "insert",
+    "javascript.preferences.importModuleSpecifier": "project-relative",
+    "javascript.preferences.quoteStyle": "double",
+    "javascript.suggest.completeFunctionCalls": true,
+    "typescript.format.semicolons": "insert",
+    "typescript.preferences.quoteStyle": "double",
+    "typescript.suggest.completeFunctionCalls": true
+}

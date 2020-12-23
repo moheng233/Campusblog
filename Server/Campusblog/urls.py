@@ -27,6 +27,7 @@ router.register('classify',views.ClassifyViewSet)
 router.register('uploadimage', views.UploadImagesViewSet)
 router.register('posts', views.PostViewSet)
 router.register('reports', views.ReportsViewSet)
+router.register('notices', views.NoticesViewSet)
 
 admin.site.site_header = getattr(config,'site_name')
 

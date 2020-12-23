@@ -6,7 +6,7 @@ from django.db.models.fields import files
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedModelSerializer, Serializer
 
-from Campusblogs.models import Blogs, Classify, Posts, Reports, UploadImages
+from Campusblogs.models import Blogs, Classify, Notices, Posts, Reports, UploadImages
 
 
 class BlogsUserSerializer(serializers.ModelSerializer):
@@ -131,3 +131,10 @@ class ReportsSerializer(serializers.ModelSerializer):
 
         return super().create(validated_data=validated_data)
         pass
+
+class NoticesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notices
+
+        fields = ("id","content",)
+        read_only_fields = ('id',)

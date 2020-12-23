@@ -30,15 +30,6 @@ export const Fabulous = localwritable<
     { [keys: number]: boolean }
 >("fabulous", {});
 
-let noLogin: IUser = {
-    avatar: undefined,
-    first_name: "noLogin",
-    id: -1,
-    email: "noLogin",
-    last_name: "noLogin",
-    last_login: new Date().toString(),
-    username: "noLogin",
-};
 
 export const User = derived<[Readable<boolean>], IUser>(
     [LoginSwitch],
@@ -48,7 +39,7 @@ export const User = derived<[Readable<boolean>], IUser>(
                 set(r);
             });
         } else {
-            set(noLogin);
+            set(undefined);
         }
     },
     undefined

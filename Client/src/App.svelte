@@ -49,8 +49,8 @@
 			userData: {
 				title: "搜索",
 				HeaderType: "back",
-				hideHeader: true
-			}
+				hideHeader: true,
+			},
 		}),
 		"/edit/:id": wrap({
 			// @ts-ignore
