@@ -161,7 +161,14 @@
                 <a
                     class="btn-floating btn-large red"
                     on:click={() => {
-                        open(reportModal, { uid: blog.user.id });
+                        if($LoginSwitch){
+                            open(reportModal, { uid: blog.user.id });
+                        } else {
+                            toast({
+                                html: "没有登陆无法举报"
+                            })
+                        }
+                        
                     }}>
                     <i class="large material-icons">report</i>
                 </a>
