@@ -560,7 +560,7 @@ export class ClientApi {
 
   async BlogRemoveFabulous(bid: number) {
     const r = await this.api<{}, {}>(
-      `/blogs/${bid}/add_fabulous/`,
+      `/blogs/${bid}/remove_fabulous/`,
       undefined,
       undefined,
       "GET",
